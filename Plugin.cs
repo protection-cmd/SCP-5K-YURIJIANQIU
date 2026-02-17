@@ -1,0 +1,223 @@
+﻿using System;
+using Exiled.API.Features;
+using Exiled.CustomRoles.API.Features;
+using Respawning;
+using SCP5K.Events;
+using SCP5K.LCZRole;
+using SCP5K.MVPSystem;
+using SCP5K.SCPFouRole;
+using System.IO;
+using Exiled.CustomRoles.API;
+
+namespace SCP5K
+{
+    public class Plugin : Plugin<Config>
+    {
+        public const string Package = "YuRiJianQiu-5K";
+        public override string Name => "SCP-5K-YuRiJianQiu";
+        public override string Author => "聿日箋秋-Protection";
+        public override Version Version => new Version(1, 0, 0);
+        public override Version RequiredExiledVersion => new Version(9, 10, 2);
+
+        public static Plugin Instance;
+        private D9341EventHandler d9341Handler;
+        internal AmmoEvents AmmoEvents { get; } = new AmmoEvents();
+
+        private MVPConfigManager mvpConfigManager;
+        private MusicPlayer musicPlayer;
+        private MvpEvent mvpEvent;
+        private MVPSystem.MVPSystem mvpSystem;
+        private Capybalas capybalas;
+        private GateC gateC;
+
+        [Obsolete]
+        public override void OnEnabled()
+        {
+            Instance = this;
+
+            // ==========================================
+            // 【核心修复】：采用单例强行注册，100%保证内存中存在这些角色
+            // ==========================================
+            RegisterAllCustomRoles();
+
+            BadgeController.Initialize();
+            AmmoEvents.RegEvent();
+            EnsureMVPConfigDirectoryExists();
+
+            this.mvpConfigManager = new MVPConfigManager();
+            this.mvpConfigManager.LoadMVPConfig();
+            this.musicPlayer = new MusicPlayer(mvpConfigManager);
+            this.mvpEvent = new MvpEvent(mvpConfigManager);
+            this.mvpSystem = new MVPSystem.MVPSystem(musicPlayer);
+            this.mvpConfigManager.StartAutoReload();
+
+            this.capybalas = new Capybalas();
+            this.capybalas.SubscribeEvents();
+
+            this.gateC = new GateC();
+            this.gateC.SubscribeEvents();
+
+            Exiled.Events.Handlers.Player.Verified += this.mvpEvent.Verified;
+            Exiled.Events.Handlers.Player.Dying += this.mvpEvent.Dying;
+            Exiled.Events.Handlers.Player.Hurting += this.mvpEvent.Hurting;
+            Exiled.Events.Handlers.Scp079.GainingExperience += this.mvpEvent.OnGainingExperience;
+            Exiled.Events.Handlers.Server.WaitingForPlayers += this.mvpEvent.WaitingForPlayer;
+            Exiled.Events.Handlers.Server.RoundEnded += this.mvpSystem.RoundEnded;
+
+            Exiled.Events.Handlers.Server.WaitingForPlayers += this.musicPlayer.WaitingForPlayer;
+            Exiled.Events.Handlers.Server.RoundEnded += (ev) => this.musicPlayer.RoundEnded();
+
+            if (Config.DisableVanillaRespawns)
+            {
+                VanillaSpawnDisabler.DisableVanillaRespawns = Config.DisableVanillaRespawns;
+                VanillaSpawnDisabler.Init();
+                VanillaSpawnDisabler.RegisterEvents();
+            }
+
+            if (Config.EnableSpecialDClass) DDpig.RegisterEvents();
+            if (Config.EnableAthlete) DDRunning.RegisterEvents();
+
+            d9341Handler = new D9341EventHandler();
+            d9341Handler.RegisterEvents();
+
+            Exiled.Events.Handlers.Server.RoundEnded += _ => BadgeController.OnRoundEnded();
+            Exiled.Events.Handlers.Server.RoundStarted += OmegaWarhead.OnRoundStart;
+            Exiled.Events.Handlers.Server.RoundEnded.Subscribe(ev => OmegaWarhead.OnRoundEnd());
+            Exiled.Events.Handlers.Server.RoundStarted += CASSIE.OnRoundStarted;
+
+            ArcaneStrike.MusicPath = Config.ArcaneMusicPath;
+            ArcaneStrike.CountdownDuration = Config.ArcaneCountdownDuration;
+            ArcaneStrike.SchematicPosition = new UnityEngine.Vector3(Config.ArcaneSchematicX, Config.ArcaneSchematicY, Config.ArcaneSchematicZ);
+
+            GOCArcaneStrike.MusicPath = Config.GOCMusicPath;
+            GOCArcaneStrike.SpawnMusicPath = Config.GOCSpawnMusicPath;
+            GOCArcaneStrike.CountdownDuration = Config.GOCCountdownDuration;
+            GOCArcaneStrike.SchematicPosition = new UnityEngine.Vector3(Config.GOCSchematicX, Config.GOCSchematicY, Config.GOCSchematicZ);
+            GOCArcaneStrike.SchematicName = Config.GOCSchematicName;
+            GOCArcaneStrike.RGMSchematicPosition = new UnityEngine.Vector3(Config.ArcaneSchematicX, Config.ArcaneSchematicY, Config.ArcaneSchematicZ);
+
+            Nu7HammerDown.SchematicPosition = new UnityEngine.Vector3(Config.Nu7SchematicX, Config.Nu7SchematicY, Config.Nu7SchematicZ);
+            Nu7HammerDown.SpawnMusicPath = Config.Nu7SpawnMusicPath;
+
+            GOCTeam.SchematicPosition = new UnityEngine.Vector3(Config.GOCTeamSchematicX, Config.GOCTeamSchematicY, Config.GOCTeamSchematicZ);
+            GOCTeam.SchematicName = Config.GOCTeamSchematicName;
+            GOCTeam.SpawnMusicPath = Config.GOCTeamSpawnMusicPath;
+
+            GOCArcaneStrike.RegisterEvents();
+            Nu7HammerDown.RegisterEvents();
+            GOCTeam.RegisterEvents();
+            CIGRU.RegisterEvents();
+            SCP682.RegisterEvents();
+            SCP610.RegisterEvents();
+
+            if (Config.EnableCustomSpawnManager)
+            {
+                CustomSpawnManager.Init();
+                CustomSpawnManager.SpawnInterval = Config.CustomSpawnInterval;
+                CustomSpawnManager.CheckInterval = Config.SpawnCheckInterval;
+                CustomSpawnManager.AvailableSquads = Config.AvailableSquads;
+                CustomSpawnManager.RegisterEvents();
+            }
+
+            if (Config.EnableSSS) SSSSettings.Register();
+
+            Log.Info("SCP-5K 插件已成功启动！");
+            base.OnEnabled();
+        }
+
+        private void RegisterAllCustomRoles()
+        {
+            try
+            {
+                Nu7Commander.Instance.Register();
+                Nu7Sergeant.Instance.Register();
+                Nu7Private.Instance.Register();
+                GOCCommander.Instance.Register();
+                GOCHeavy.Instance.Register();
+                GOCSergeant.Instance.Register();
+                GOCPrivate.Instance.Register();
+                GOCArcaneCommander.Instance.Register();
+                GOCArcaneSergeant.Instance.Register();
+                CICommanderRole.Instance.Register();
+                CIRaznovRole.Instance.Register();
+                CIHeavyRole.Instance.Register();
+                CIRiflemanRole.Instance.Register();
+                SCP610MotherRole.Instance.Register();
+                SCP610SprayerRole.Instance.Register();
+                SCP610ChildRole.Instance.Register();
+                SCP682Role.Instance.Register();
+                D9341Role.Instance.Register();
+                LiangziRole.Instance.Register();
+                AthleteRole.Instance.Register();
+                Log.Info("所有 CustomRole 角色通过单例模式硬核注册完毕！RA命令现在百分百可用！");
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"注册自定义角色时出错: {ex}");
+            }
+        }
+
+        public override void OnDisabled()
+        {
+            CustomRole.UnregisterRoles();
+
+            this.mvpConfigManager?.StopAutoReload();
+            Exiled.Events.Handlers.Player.Verified -= this.mvpEvent.Verified;
+            Exiled.Events.Handlers.Player.Dying -= this.mvpEvent.Dying;
+            Exiled.Events.Handlers.Player.Hurting -= this.mvpEvent.Hurting;
+            Exiled.Events.Handlers.Scp079.GainingExperience -= this.mvpEvent.OnGainingExperience;
+            Exiled.Events.Handlers.Server.WaitingForPlayers -= this.mvpEvent.WaitingForPlayer;
+            Exiled.Events.Handlers.Server.RoundEnded -= this.mvpSystem.RoundEnded;
+            Exiled.Events.Handlers.Server.WaitingForPlayers -= this.musicPlayer.WaitingForPlayer;
+            Exiled.Events.Handlers.Server.RoundEnded -= (ev) => this.musicPlayer.RoundEnded();
+
+            this.capybalas?.UnsubscribeEvents();
+            this.gateC?.UnsubscribeEvents();
+            d9341Handler?.UnregisterEvents();
+            AmmoEvents.UnRegEvent();
+            BadgeController.UnregisterEvents();
+
+            Exiled.Events.Handlers.Server.RoundStarted -= OmegaWarhead.OnRoundStart;
+            Exiled.Events.Handlers.Server.RoundEnded.Unsubscribe(ev => OmegaWarhead.OnRoundEnd());
+            Exiled.Events.Handlers.Server.RoundStarted -= CASSIE.OnRoundStarted;
+
+            DDpig.UnregisterEvents();
+            DDRunning.UnregisterEvents();
+            GOCArcaneStrike.UnregisterEvents();
+            Nu7HammerDown.UnregisterEvents();
+            GOCTeam.UnregisterEvents();
+            CIGRU.UnregisterEvents();
+            SCP682.UnregisterEvents();
+            SCP610.UnregisterEvents();
+            CustomSpawnManager.UnregisterEvents();
+            VanillaSpawnDisabler.UnregisterEvents();
+            SSSSettings.Unregister();
+
+            this.mvpConfigManager = null;
+            this.musicPlayer = null;
+            this.mvpEvent = null;
+            this.mvpSystem = null;
+            this.capybalas = null;
+            this.gateC = null;
+            d9341Handler = null;
+            Instance = null;
+            base.OnDisabled();
+        }
+
+        [Obsolete]
+        public override void OnReloaded()
+        {
+            base.OnReloaded();
+        }
+
+        private void EnsureMVPConfigDirectoryExists()
+        {
+            try
+            {
+                string mvpConfigDir = Path.GetDirectoryName(Config.MVPConfigFilePath);
+                if (!Directory.Exists(mvpConfigDir)) Directory.CreateDirectory(mvpConfigDir);
+            }
+            catch (Exception ex) { Log.Error($"创建MVP配置目录时出错: {ex.Message}"); }
+        }
+    }
+}
