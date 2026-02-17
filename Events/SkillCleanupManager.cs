@@ -25,7 +25,7 @@ namespace SCP5K.Events
             if (ev.Player == null) return;
 
             // 当通过管理员(RA面板)、强制切换类或自然重生改变角色时，清空之前所有的CustomRole和技能状态
-            if (ev.Reason == Exiled.API.Enums.SpawnReason.ForceClass || 
+            if (ev.Reason == Exiled.API.Enums.SpawnReason.ForceClass ||
                 ev.Reason == Exiled.API.Enums.SpawnReason.LateJoin ||
                 ev.Reason == Exiled.API.Enums.SpawnReason.Respawn)
             {
@@ -34,9 +34,12 @@ namespace SCP5K.Events
                 {
                     role.RemoveRole(ev.Player);
                 }
-                
+
+                // 抹除头衔、颜色和信息
+                ev.Player.RankName = string.Empty;
+                ev.Player.RankColor = string.Empty;
                 ev.Player.CustomInfo = string.Empty;
-                
+
                 CleanUpPlayerStates(ev.Player);
             }
         }
@@ -45,9 +48,6 @@ namespace SCP5K.Events
         {
             if (ev.Player != null)
             {
-                ev.Player.RankName = string.Empty;
-                ev.Player.RankColor = string.Empty;
-                ev.Player.CustomInfo = string.Empty;
                 CleanUpPlayerStates(ev.Player);
             }
         }
@@ -57,15 +57,18 @@ namespace SCP5K.Events
             if (ev.Player != null) CleanUpPlayerStates(ev.Player);
         }
 
+        // 集中清理所有的字典冷却和技能特效
         public static void CleanUpPlayerStates(Player player)
         {
-
+            // 清理可能残留的增益和负面特效
             player.DisableEffect(Exiled.API.Enums.EffectType.MovementBoost);
             player.DisableEffect(Exiled.API.Enums.EffectType.DamageReduction);
             player.DisableEffect(Exiled.API.Enums.EffectType.Ensnared);
             player.DisableEffect(Exiled.API.Enums.EffectType.NightVision);
 
+            // 清理阵营特有的内存字典与开门权限等（避免内存泄漏和技能残留）
             SCP5K.SCPFouRole.Nu7HammerDown.CleanUpPlayer(player);
+            SCP5K.SCPFouRole.GRUCIManager.CleanUpPlayer(player);
         }
     }
 }

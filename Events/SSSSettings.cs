@@ -29,6 +29,12 @@ namespace SCP5K.SCPFouRole
         public const int SCP682_PITIFUL_ABILITY_KEYBIND_ID = 106;
         public const int CI_RAZNOV_COIN_ABILITY_KEYBIND_ID = 107;
 
+        // ★ 新增：GRU-CI 阵营技能ID
+        public const int GRUCI_DEMO_SKILL_ID = 130;
+        public const int GRUCI_CMDR_SKILL_ID = 131;
+        public const int GRUCI_INV_SKILL1_ID = 132;
+        public const int GRUCI_INV_SKILL2_ID = 133;
+
         [System.Obsolete]
         public static void Register()
         {
@@ -46,6 +52,12 @@ namespace SCP5K.SCPFouRole
                 new KeybindSetting(NU7B_CMDR_SKILL2_ID, "指挥官-画地为牢", KeyCode.H, hintDescription: "禁锢周围非基金会阵营1.5秒(CD 60s)"),
                 new KeybindSetting(NU7B_TIEXUE_SKILL1_ID, "铁血-再著诗篇", KeyCode.G, hintDescription: "立刻获得一把囚鸟(CD 120s)"),
                 new KeybindSetting(NU7B_TIEXUE_SKILL2_ID, "铁血-冲，冲，冲！", KeyCode.H, hintDescription: "加速并造成2倍伤害持续5秒(CD 60s)"),
+
+                new HeaderSetting("GRU-CI 特遣队","",false),
+                new KeybindSetting(GRUCI_DEMO_SKILL_ID, "爆破手-火力充足", KeyCode.G, hintDescription: "获得一个手雷 (CD 35s)"),
+                new KeybindSetting(GRUCI_CMDR_SKILL_ID, "指挥官-高斯放电", KeyCode.G, hintDescription: "获得一把电炮 (仅1次)"),
+                new KeybindSetting(GRUCI_INV_SKILL1_ID, "考察员-寻找真相", KeyCode.G, hintDescription: "为所有存活队友提升移速 (CD 50s)"),
+                new KeybindSetting(GRUCI_INV_SKILL2_ID, "考察员-牵引器", KeyCode.H, hintDescription: "将一名随机敌人拉到面前定身 (仅1次)"),
 
                 new HeaderSetting("轻收容阵营","",false),
                 new KeybindSetting(ATHLETE_ABILITY_KEYBIND_ID, "爆发极限", KeyCode.G, hintDescription: "短时间内大幅提升移动速度"),
@@ -78,36 +90,27 @@ namespace SCP5K.SCPFouRole
 
             switch (keybindSetting.SettingId)
             {
-                case NU7A_CMDR_SKILL1_ID:
-                    if (Nu7ACommander.Instance.Check(player)) Nu7HammerDown.ExecuteNu7ACmdrSkill1(player); break;
-                case NU7A_CMDR_SKILL2_ID:
-                    if (Nu7ACommander.Instance.Check(player)) Nu7HammerDown.ExecuteNu7ACmdrSkill2(player); break;
-                case NU7A_JIFENG_SKILL_ID:
-                    if (Nu7AJiFeng.Instance.Check(player)) Nu7HammerDown.ExecuteNu7AJiFengSkill(player); break;
+                case NU7A_CMDR_SKILL1_ID: if (Nu7ACommander.Instance.Check(player)) Nu7HammerDown.ExecuteNu7ACmdrSkill1(player); break;
+                case NU7A_CMDR_SKILL2_ID: if (Nu7ACommander.Instance.Check(player)) Nu7HammerDown.ExecuteNu7ACmdrSkill2(player); break;
+                case NU7A_JIFENG_SKILL_ID: if (Nu7AJiFeng.Instance.Check(player)) Nu7HammerDown.ExecuteNu7AJiFengSkill(player); break;
+                case NU7B_CMDR_SKILL1_ID: if (Nu7BCommander.Instance.Check(player)) Nu7HammerDown.ExecuteNu7BCmdrSkill1(player); break;
+                case NU7B_CMDR_SKILL2_ID: if (Nu7BCommander.Instance.Check(player)) Nu7HammerDown.ExecuteNu7BCmdrSkill2(player); break;
+                case NU7B_TIEXUE_SKILL1_ID: if (Nu7BTieXue.Instance.Check(player)) Nu7HammerDown.ExecuteNu7BTieXueSkill1(player); break;
+                case NU7B_TIEXUE_SKILL2_ID: if (Nu7BTieXue.Instance.Check(player)) Nu7HammerDown.ExecuteNu7BTieXueSkill2(player); break;
 
-                case NU7B_CMDR_SKILL1_ID:
-                    if (Nu7BCommander.Instance.Check(player)) Nu7HammerDown.ExecuteNu7BCmdrSkill1(player); break;
-                case NU7B_CMDR_SKILL2_ID:
-                    if (Nu7BCommander.Instance.Check(player)) Nu7HammerDown.ExecuteNu7BCmdrSkill2(player); break;
-                case NU7B_TIEXUE_SKILL1_ID:
-                    if (Nu7BTieXue.Instance.Check(player)) Nu7HammerDown.ExecuteNu7BTieXueSkill1(player); break;
-                case NU7B_TIEXUE_SKILL2_ID:
-                    if (Nu7BTieXue.Instance.Check(player)) Nu7HammerDown.ExecuteNu7BTieXueSkill2(player); break;
+                // ★ 触发 GRU-CI 技能
+                case GRUCI_DEMO_SKILL_ID: if (GRUCIDemolitionist.Instance.Check(player)) GRUCIManager.ExecuteDemoSkill(player); break;
+                case GRUCI_CMDR_SKILL_ID: if (GRUCICommander.Instance.Check(player)) GRUCIManager.ExecuteCmdrSkill(player); break;
+                case GRUCI_INV_SKILL1_ID: if (GRUCIInvestigator.Instance.Check(player)) GRUCIManager.ExecuteInvSkill1(player); break;
+                case GRUCI_INV_SKILL2_ID: if (GRUCIInvestigator.Instance.Check(player)) GRUCIManager.ExecuteInvSkill2(player); break;
 
-                case ATHLETE_ABILITY_KEYBIND_ID:
-                    if (SCP5K.LCZRole.DDRunning.IsAthlete(player)) SCP5K.LCZRole.DDRunning.ActivateAthleteAbility(player); break;
-                case GOC_COMMANDER_ABILITY_KEYBIND_ID:
-                    if (GOCTeam.IsCommander(player)) GOCTeam.ExecuteCommanderAbilityFromKeybind(player); break;
-                case GOC_HEAVY_ABILITY_KEYBIND_ID:
-                    if (GOCTeam.IsHeavy(player)) GOCTeam.ExecuteHeavyAbilityFromKeybind(player); break;
-                case GOC_SERGEANT_ABILITY_KEYBIND_ID:
-                    if (GOCTeam.IsSergeant(player)) GOCTeam.ExecuteSergeantAbilityFromKeybind(player); break;
-                case SCP682_ABHORRENCE_ABILITY_KEYBIND_ID:
-                    if (SCP682.IsSCP682(player)) SCP682.ExecuteAbhorrenceAbilityFromKeybind(player); break;
-                case SCP682_PITIFUL_ABILITY_KEYBIND_ID:
-                    if (SCP682.IsSCP682(player)) SCP682.ExecutePitifulAbilityFromKeybind(player); break;
-                case CI_RAZNOV_COIN_ABILITY_KEYBIND_ID:
-                    if (CIGRU.IsRaznov(player)) CIGRU.ExecuteRaznovCoinAbilityFromKeybind(player); break;
+                case ATHLETE_ABILITY_KEYBIND_ID: if (SCP5K.LCZRole.DDRunning.IsAthlete(player)) SCP5K.LCZRole.DDRunning.ActivateAthleteAbility(player); break;
+                case GOC_COMMANDER_ABILITY_KEYBIND_ID: if (GOCTeam.IsCommander(player)) GOCTeam.ExecuteCommanderAbilityFromKeybind(player); break;
+                case GOC_HEAVY_ABILITY_KEYBIND_ID: if (GOCTeam.IsHeavy(player)) GOCTeam.ExecuteHeavyAbilityFromKeybind(player); break;
+                case GOC_SERGEANT_ABILITY_KEYBIND_ID: if (GOCTeam.IsSergeant(player)) GOCTeam.ExecuteSergeantAbilityFromKeybind(player); break;
+                case SCP682_ABHORRENCE_ABILITY_KEYBIND_ID: if (SCP682.IsSCP682(player)) SCP682.ExecuteAbhorrenceAbilityFromKeybind(player); break;
+                case SCP682_PITIFUL_ABILITY_KEYBIND_ID: if (SCP682.IsSCP682(player)) SCP682.ExecutePitifulAbilityFromKeybind(player); break;
+                case CI_RAZNOV_COIN_ABILITY_KEYBIND_ID: if (CIGRU.IsRaznov(player)) CIGRU.ExecuteRaznovCoinAbilityFromKeybind(player); break;
             }
         }
     }

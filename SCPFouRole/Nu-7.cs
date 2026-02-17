@@ -22,6 +22,11 @@ namespace SCP5K.SCPFouRole
         public abstract Vector3 CinematicPosition { get; }
         public abstract string SpawnHint { get; }
         public virtual List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>();
+        public override bool KeepRoleOnChangingRole { get; set; } = false;
+        public override bool KeepRoleOnDeath { get; set; } = false;
+        public override bool KeepInventoryOnSpawn { get; set; } = false;
+        public override bool KeepPositionOnSpawn { get; set; } = false;
+
 
         protected override void RoleAdded(Player player)
         {

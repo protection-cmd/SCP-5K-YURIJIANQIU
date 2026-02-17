@@ -35,10 +35,10 @@ namespace SCP5K
         {
             Instance = this;
 
+            // 注册角色
             RegisterAllCustomRoles();
 
-            // 删除了旧的 BadgeController.Initialize()
-            // ★ 新增：注册技能状态清空管家 ★
+            // 注册技能状态清空管家
             SkillCleanupManager.RegisterEvents();
 
             AmmoEvents.RegEvent();
@@ -80,8 +80,6 @@ namespace SCP5K
             d9341Handler = new D9341EventHandler();
             d9341Handler.RegisterEvents();
 
-            // 删除了旧的 Exiled.Events.Handlers.Server.RoundEnded += _ => BadgeController.OnRoundEnded();
-
             Exiled.Events.Handlers.Server.RoundStarted += OmegaWarhead.OnRoundStart;
             Exiled.Events.Handlers.Server.RoundEnded.Subscribe(ev => OmegaWarhead.OnRoundEnd());
             Exiled.Events.Handlers.Server.RoundStarted += CASSIE.OnRoundStarted;
@@ -112,6 +110,9 @@ namespace SCP5K
             SCP682.RegisterEvents();
             SCP610.RegisterEvents();
 
+            // ★ 注册全新的 GRU-CI 事件管理器
+            GRUCIManager.RegisterEvents();
+
             if (Config.EnableCustomSpawnManager)
             {
                 CustomSpawnManager.Init();
@@ -131,14 +132,15 @@ namespace SCP5K
         {
             try
             {
+                // Nu-7 A连 与 B连
                 Nu7ACommander.Instance.Register();
                 Nu7AJiFeng.Instance.Register();
                 Nu7APrivate.Instance.Register();
-
                 Nu7BCommander.Instance.Register();
                 Nu7BTieXue.Instance.Register();
                 Nu7BPrivate.Instance.Register();
 
+                // GOC 与 CIGRU
                 GOCCommander.Instance.Register();
                 GOCHeavy.Instance.Register();
                 GOCSergeant.Instance.Register();
@@ -149,6 +151,17 @@ namespace SCP5K
                 CIRaznovRole.Instance.Register();
                 CIHeavyRole.Instance.Register();
                 CIRiflemanRole.Instance.Register();
+
+                // GRU-CI 特遣队所有职业注册
+                GRUCIHacker.Instance.Register();
+                GRUCIBreacher.Instance.Register();
+                GRUCIDemolitionist.Instance.Register();
+                GRUCICommander.Instance.Register();
+                GRUCIInvestigator.Instance.Register();
+                GRUCISoldier.Instance.Register();
+                GRUCIConscript.Instance.Register();
+
+                // SCP 与 特殊D级
                 SCP610MotherRole.Instance.Register();
                 SCP610SprayerRole.Instance.Register();
                 SCP610ChildRole.Instance.Register();
@@ -156,7 +169,8 @@ namespace SCP5K
                 D9341Role.Instance.Register();
                 LiangziRole.Instance.Register();
                 AthleteRole.Instance.Register();
-                Log.Info("所有 CustomRole 角色注册完毕！");
+
+                Log.Info("所有 CustomRole 角色通过单例模式硬核注册完毕！");
             }
             catch (Exception ex)
             {
@@ -183,8 +197,7 @@ namespace SCP5K
             d9341Handler?.UnregisterEvents();
             AmmoEvents.UnRegEvent();
 
-            // 删除了旧的 BadgeController.UnregisterEvents();
-            // ★ 新增：注销清理管家 ★
+            // 注销清理管家
             SkillCleanupManager.UnregisterEvents();
 
             Exiled.Events.Handlers.Server.RoundStarted -= OmegaWarhead.OnRoundStart;
@@ -199,6 +212,10 @@ namespace SCP5K
             CIGRU.UnregisterEvents();
             SCP682.UnregisterEvents();
             SCP610.UnregisterEvents();
+
+            // ★ 注销新阵营事件
+            GRUCIManager.UnregisterEvents();
+
             CustomSpawnManager.UnregisterEvents();
             VanillaSpawnDisabler.UnregisterEvents();
             SSSSettings.Unregister();

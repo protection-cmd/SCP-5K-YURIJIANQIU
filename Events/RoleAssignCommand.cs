@@ -40,6 +40,7 @@ namespace SCP5K.Commands
             { "GOCTEAM", "GOC打击小组 (需要4-8名)" },
             { "610", "SCP-610血肉瘟疫 (需要2名，第一个为母体，第二个为喷射体)" },
             { "CI", "混沌分裂者GRU小组 (需要3-6名)" },
+            { "GRUCI", "GRU-CI 特遣队 (需要1-13名)" },
             
             // 模型生成
             { "SPAWN", "生成GOC模型" }
@@ -47,7 +48,6 @@ namespace SCP5K.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            // 【修复CS0177】: 强制在第一行赋初始值，防止编译器判定未赋值跳出方法
             response = string.Empty;
 
             if (!sender.CheckPermission("5k.setrole"))
@@ -95,6 +95,7 @@ namespace SCP5K.Commands
                     case "GOCTEAM":
                     case "610":
                     case "CI":
+                    case "GRUCI":
                         return HandleTeamRole(commandType, arguments, out response);
 
                     case "SPAWN":
@@ -115,7 +116,6 @@ namespace SCP5K.Commands
 
         private bool HandleSingleRole(string roleType, ArraySegment<string> arguments, out string response)
         {
-            // 【修复CS0177】: 强制在第一行赋初始值
             response = string.Empty;
 
             if (arguments.Count < 2)
@@ -166,7 +166,6 @@ namespace SCP5K.Commands
 
         private bool HandleTeamRole(string roleType, ArraySegment<string> arguments, out string response)
         {
-            // 【修复CS0177】: 强制在第一行赋初始值
             response = string.Empty;
 
             List<Player> targetPlayers = new List<Player>();
@@ -214,6 +213,13 @@ namespace SCP5K.Commands
                     response = $"生成NU7B队伍需要4-7名玩家，但指定了{targetPlayers.Count}名"; return false;
                 }
             }
+            else if (roleType.ToUpper() == "GRUCI")
+            {
+                if (targetPlayers.Count < 1 || targetPlayers.Count > 13)
+                {
+                    response = $"生成GRUCI队伍需要1-13名玩家，但指定了{targetPlayers.Count}名"; return false;
+                }
+            }
             else
             {
                 int requiredPlayers = GetRequiredPlayerCount(roleType);
@@ -259,6 +265,11 @@ namespace SCP5K.Commands
                 case "CI":
                     success = CIGRU.SpawnCITeam(targetPlayers);
                     teamName = "混沌分裂者GRU小组";
+                    playerNames = string.Join(", ", targetPlayers.Select(p => $"{p.Nickname}({p.Id})"));
+                    break;
+                case "GRUCI":
+                    success = GRUCIManager.SpawnTeam(targetPlayers);
+                    teamName = "GRU-CI 特遣队";
                     playerNames = string.Join(", ", targetPlayers.Select(p => $"{p.Nickname}({p.Id})"));
                     break;
             }
@@ -421,21 +432,14 @@ namespace SCP5K.Commands
   5K 良子 <玩家ID>        - 设置为特殊D级(良子)
   5K 运动员 <玩家ID>      - 设置为运动员
   5K 682 <玩家ID>         - 设置为SCP-682 (不灭孽蜥)
-  5K 610MOTHER <玩家ID>   - 设置为SCP-610母体 (固定1000血)
-  5K 610SPRAYER <玩家ID>  - 设置为SCP-610喷射体 (固定600血+COM15)
-  5K 610CHILD <玩家ID>    - 设置为SCP-610子个体 (固定400血)
 
 🔹 队伍 (必须指定玩家ID):
-  5K GOC <玩家ID> <玩家ID2> <玩家ID3>                - 生成GOC奇术打击小组 (需要3名)
-  5K NU7A <玩家ID1...玩家ID5>                        - 生成Nu-7-A连 (需要3-5名)
-  5K NU7B <玩家ID1...玩家ID7>                        - 生成Nu-7-B连 (需要4-7名)
-  5K GOCTeam <玩家ID1...玩家ID8>                     - 生成GOC打击小组 (需要4-8名)
-  5K 610 <玩家ID> <玩家ID2>                          - 生成SCP-610血肉瘟疫 (需要2名：第一个为母体，第二个为喷射体)
-  5K CI <玩家ID1...玩家ID6>                          - 生成混沌分裂者GRU小组 (需要3-6名)
-
-🔹 模型生成:
-  5K spawn GOCRGM <x> <y> <z>    - 在指定位置生成GOCRGM模型
-  5K spawn GOCSWORD <x> <y> <z>  - 在指定位置生成GOCSWORD模型";
+  5K GOC <玩家ID1...3>                 - 生成GOC奇术打击小组 (需要3名)
+  5K NU7A <玩家ID1...5>                - 生成Nu-7-A连 (需要3-5名)
+  5K NU7B <玩家ID1...7>                - 生成Nu-7-B连 (需要4-7名)
+  5K GRUCI <玩家ID1...13>              - 生成GRU-CI特遣队 (需要1-13名)
+  5K CI <玩家ID1...6>                  - 生成混沌分裂者GRU小组 (需要3-6名)
+  5K 610 <玩家ID1> <玩家ID2>           - 生成SCP-610血肉瘟疫 (母体+喷射体)";
         }
 
         private string GetAvailableRoles()
@@ -454,15 +458,10 @@ namespace SCP5K.Commands
             result += "\n🔹 队伍 🔹\n";
             result += "══════════\n";
             foreach (var role in AvailableRoles.Where(x =>
-                x.Key == "GOC" || x.Key == "NU7A" || x.Key == "NU7B" || x.Key == "GOCTEAM" || x.Key == "610" || x.Key == "CI"))
+                x.Key == "GOC" || x.Key == "NU7A" || x.Key == "NU7B" || x.Key == "GOCTEAM" || x.Key == "610" || x.Key == "CI" || x.Key == "GRUCI"))
             {
                 result += $"• {role.Key}: {role.Value}\n";
             }
-
-            result += "\n🔹 模型生成 🔹\n";
-            result += "═══════════════\n";
-            result += "• GOCRGM: 在指定位置生成GOCRGM模型\n";
-            result += "• GOCSWORD: 在指定位置生成GOCSWORD模型\n";
 
             return result;
         }
