@@ -18,8 +18,6 @@ namespace SCP5K
         [Description("Inf Ammo / 无限子弹")]
         public bool InfAmmo { get; set; } = true;
 
-        [Description("是否在回合开始时清除所有玩家称号")]
-        public bool RemoveBadgesOnRoundStart { get; set; } = true;
 
         [Description("是否在回合开始时选择良子")]
         public bool EnableSpecialDClass { get; set; } = true;
@@ -101,8 +99,12 @@ namespace SCP5K
         [Description("Nu-7原理图生成位置Z坐标")]
         public float Nu7SchematicZ { get; set; } = 0f;
 
-        [Description("Nu-7原理图音乐文件路径")]
-        public string Nu7SpawnMusicPath { get; set; } = "C:/Path/To/Your/Nu7SpawnMusic.ogg";
+        // ★ 修改这部分为A连和B连的单独音乐路径
+        [Description("Nu-7-A连原理图音乐文件路径")]
+        public string Nu7ASpawnMusicPath { get; set; } = "C:/Path/To/Your/Nu7ASpawnMusic.ogg";
+
+        [Description("Nu-7-B连原理图音乐文件路径")]
+        public string Nu7BSpawnMusicPath { get; set; } = "C:/Path/To/Your/Nu7BSpawnMusic.ogg";
 
         [Description("是否启用自定义刷新管理器")]
         public bool EnableCustomSpawnManager { get; set; } = true;
@@ -166,7 +168,5 @@ namespace SCP5K
             "admin",
             "moderator"
         };
-
-
     }
 }

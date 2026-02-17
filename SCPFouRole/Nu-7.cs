@@ -217,7 +217,6 @@ namespace SCP5K.SCPFouRole
 
         public override string Description { get; set; } = "Nu-7-B连 列兵";
 
-        // B连列兵物品与A连列兵一致
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
             ItemType.GunE11SR, ItemType.ArmorCombat, ItemType.Medkit, ItemType.Radio, ItemType.Adrenaline
@@ -253,7 +252,10 @@ namespace SCP5K.SCPFouRole
 
         public static string SchematicName { get; set; } = "Nu7Rc";
         public static Vector3 SchematicPosition { get; set; } = Vector3.zero;
-        public static string SpawnMusicPath { get; set; }
+
+        // ★ 分别记录A连和B连的音乐路径
+        public static string SpawnMusicPathA { get; set; }
+        public static string SpawnMusicPathB { get; set; }
 
         public static void SafeRemoveAudioBot(int id)
         {
@@ -272,7 +274,6 @@ namespace SCP5K.SCPFouRole
             catch { }
         }
 
-        // ★ 新增：清理指定玩家在 NU-7 产生的所有 CD 缓存和状态 ★
         public static void CleanUpPlayer(Player player)
         {
             aCmdrSkill1CD.Remove(player);
@@ -301,7 +302,6 @@ namespace SCP5K.SCPFouRole
 
             Timing.CallDelayed(20f, () =>
             {
-                // 保护机制：如果在这 20 秒里他死亡或者被管理员切了职业，取消传送
                 if (player != null && player.IsAlive && Nu7ACommander.Instance.Check(player))
                 {
                     player.Position = anchorPos;
@@ -352,7 +352,6 @@ namespace SCP5K.SCPFouRole
 
             Timing.CallDelayed(3f, () =>
             {
-                // ★ 保护机制：如果3秒内他被 RA 切走了职业或者死了，打断献祭防止误伤 ★
                 if (player == null || !player.IsAlive || !Nu7BCommander.Instance.Check(player)) return;
 
                 foreach (var p in Player.List.Where(x => x.IsAlive))
@@ -380,7 +379,7 @@ namespace SCP5K.SCPFouRole
                 {
                     if (p.Role.Side != Side.Mtf && p.Role.Team != Team.SCPs)
                     {
-                        p.EnableEffect(EffectType.Ensnared, 255, 1.5f);
+                        p.EnableEffect(EffectType.Ensnared, 255, 5f);
                         count++;
                     }
                 }
@@ -423,7 +422,7 @@ namespace SCP5K.SCPFouRole
             if (players.Count < 3 || players.Count > 5) return false;
 
             SpawnNu7Schematic();
-            PlayNu7SpawnMusic();
+            PlayNu7SpawnMusic(true); // ★ A连传入 True
             PlayCassie();
 
             Timing.CallDelayed(2.0f, () =>
@@ -443,7 +442,7 @@ namespace SCP5K.SCPFouRole
             if (players.Count < 4 || players.Count > 7) return false;
 
             SpawnNu7Schematic();
-            PlayNu7SpawnMusic();
+            PlayNu7SpawnMusic(false); // ★ B连传入 False
             PlayCassie();
 
             Timing.CallDelayed(2.0f, () =>
@@ -473,15 +472,19 @@ namespace SCP5K.SCPFouRole
             catch { }
         }
 
-        public static void PlayNu7SpawnMusic()
+        // ★ 根据是否是A连来决定播放哪首音乐
+        public static void PlayNu7SpawnMusic(bool isTeamA)
         {
-            if (string.IsNullOrEmpty(SpawnMusicPath) || !System.IO.File.Exists(SpawnMusicPath)) return;
+            string path = isTeamA ? SpawnMusicPathA : SpawnMusicPathB;
+            string botName = isTeamA ? "Nu-7-A连落锤" : "Nu-7-B连落锤";
+
+            if (string.IsNullOrEmpty(path) || !System.IO.File.Exists(path)) return;
             try
             {
                 SafeRemoveAudioBot(schematicMusicBotId);
-                if (AudioApi.Dummies.VoiceDummy.Add(schematicMusicBotId, "Nu-7落锤"))
+                if (AudioApi.Dummies.VoiceDummy.Add(schematicMusicBotId, botName))
                 {
-                    AudioApi.Dummies.VoiceDummy.Play(schematicMusicBotId, SpawnMusicPath);
+                    AudioApi.Dummies.VoiceDummy.Play(schematicMusicBotId, path);
                     musicCoroutine = Timing.CallDelayed(300f, StopNu7SpawnMusic);
                 }
             }

@@ -98,7 +98,8 @@ namespace SCP5K
             GOCArcaneStrike.RGMSchematicPosition = new UnityEngine.Vector3(Config.ArcaneSchematicX, Config.ArcaneSchematicY, Config.ArcaneSchematicZ);
 
             Nu7HammerDown.SchematicPosition = new UnityEngine.Vector3(Config.Nu7SchematicX, Config.Nu7SchematicY, Config.Nu7SchematicZ);
-            Nu7HammerDown.SpawnMusicPath = Config.Nu7SpawnMusicPath;
+            Nu7HammerDown.SpawnMusicPathA = Config.Nu7ASpawnMusicPath;
+            Nu7HammerDown.SpawnMusicPathB = Config.Nu7BSpawnMusicPath;
 
             GOCTeam.SchematicPosition = new UnityEngine.Vector3(Config.GOCTeamSchematicX, Config.GOCTeamSchematicY, Config.GOCTeamSchematicZ);
             GOCTeam.SchematicName = Config.GOCTeamSchematicName;
