@@ -28,8 +28,6 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "red";
-                player.RankName = "SCP-610-母体";
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
 
@@ -67,8 +65,6 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "red";
-                player.RankName = "SCP-610-喷射体";
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
 
@@ -100,8 +96,6 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "red";
-                player.RankName = "SCP-610-子个体";
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
 

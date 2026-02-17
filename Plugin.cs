@@ -35,12 +35,12 @@ namespace SCP5K
         {
             Instance = this;
 
-            // ==========================================
-            // 【核心修复】：采用单例强行注册，100%保证内存中存在这些角色
-            // ==========================================
             RegisterAllCustomRoles();
 
-            BadgeController.Initialize();
+            // 删除了旧的 BadgeController.Initialize()
+            // ★ 新增：注册技能状态清空管家 ★
+            SkillCleanupManager.RegisterEvents();
+
             AmmoEvents.RegEvent();
             EnsureMVPConfigDirectoryExists();
 
@@ -80,7 +80,8 @@ namespace SCP5K
             d9341Handler = new D9341EventHandler();
             d9341Handler.RegisterEvents();
 
-            Exiled.Events.Handlers.Server.RoundEnded += _ => BadgeController.OnRoundEnded();
+            // 删除了旧的 Exiled.Events.Handlers.Server.RoundEnded += _ => BadgeController.OnRoundEnded();
+
             Exiled.Events.Handlers.Server.RoundStarted += OmegaWarhead.OnRoundStart;
             Exiled.Events.Handlers.Server.RoundEnded.Subscribe(ev => OmegaWarhead.OnRoundEnd());
             Exiled.Events.Handlers.Server.RoundStarted += CASSIE.OnRoundStarted;
@@ -129,9 +130,14 @@ namespace SCP5K
         {
             try
             {
-                Nu7Commander.Instance.Register();
-                Nu7Sergeant.Instance.Register();
-                Nu7Private.Instance.Register();
+                Nu7ACommander.Instance.Register();
+                Nu7AJiFeng.Instance.Register();
+                Nu7APrivate.Instance.Register();
+
+                Nu7BCommander.Instance.Register();
+                Nu7BTieXue.Instance.Register();
+                Nu7BPrivate.Instance.Register();
+
                 GOCCommander.Instance.Register();
                 GOCHeavy.Instance.Register();
                 GOCSergeant.Instance.Register();
@@ -149,7 +155,7 @@ namespace SCP5K
                 D9341Role.Instance.Register();
                 LiangziRole.Instance.Register();
                 AthleteRole.Instance.Register();
-                Log.Info("所有 CustomRole 角色通过单例模式硬核注册完毕！RA命令现在百分百可用！");
+                Log.Info("所有 CustomRole 角色注册完毕！");
             }
             catch (Exception ex)
             {
@@ -175,7 +181,10 @@ namespace SCP5K
             this.gateC?.UnsubscribeEvents();
             d9341Handler?.UnregisterEvents();
             AmmoEvents.UnRegEvent();
-            BadgeController.UnregisterEvents();
+
+            // 删除了旧的 BadgeController.UnregisterEvents();
+            // ★ 新增：注销清理管家 ★
+            SkillCleanupManager.UnregisterEvents();
 
             Exiled.Events.Handlers.Server.RoundStarted -= OmegaWarhead.OnRoundStart;
             Exiled.Events.Handlers.Server.RoundEnded.Unsubscribe(ev => OmegaWarhead.OnRoundEnd());

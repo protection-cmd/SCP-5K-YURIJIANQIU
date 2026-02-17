@@ -26,8 +26,6 @@ namespace SCP5K.LCZRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "orange";
-                player.RankName = "LCZ-D-良子";
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
                 player.ShowHint($"<color=orange>你被选为良子！\n血量提升至250</color>", 10f);

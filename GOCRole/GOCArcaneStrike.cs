@@ -43,8 +43,6 @@ namespace SCP5K
         {
             var surfaceGateA = Room.Get(RoomType.EzGateA);
             player.Position = surfaceGateA != null ? surfaceGateA.Position + Vector3.up * 2.5f : new Vector3(69.939f, 320.33f, -44.94f) + Vector3.up * 2.5f;
-            player.RankName = "GOC奇术打击小组-指挥官";
-            player.RankColor = "cyan";
         }
 
         protected override void RoleRemoved(Player player)
@@ -78,8 +76,6 @@ namespace SCP5K
         {
             var surfaceGateA = Room.Get(RoomType.EzGateA);
             player.Position = surfaceGateA != null ? surfaceGateA.Position + Vector3.up * 2.5f : new Vector3(69.939f, 320.33f, -44.94f) + Vector3.up * 2.5f;
-            player.RankName = "GOC奇术打击小组-中士";
-            player.RankColor = "cyan";
         }
 
         protected override void RoleRemoved(Player player)

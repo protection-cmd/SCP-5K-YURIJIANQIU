@@ -38,8 +38,6 @@ namespace SCP5K.SCPFouRole
         {
             var gateA = Room.Get(RoomType.EzGateA);
             player.Position = gateA != null ? gateA.Position + Vector3.up * 2.5f : new Vector3(69.939f, 320.33f, -44.94f) + Vector3.up * 2.5f;
-            player.RankName = "GOC打击小组-指挥官";
-            player.RankColor = "cyan";
         }
 
         protected override void SubscribeEvents() { Exiled.Events.Handlers.Player.TogglingNoClip += OnAbilityKey; base.SubscribeEvents(); }
@@ -77,8 +75,6 @@ namespace SCP5K.SCPFouRole
         {
             var gateA = Room.Get(RoomType.EzGateA);
             player.Position = gateA != null ? gateA.Position + Vector3.up * 2.5f : new Vector3(69.939f, 320.33f, -44.94f) + Vector3.up * 2.5f;
-            player.RankName = "GOC打击小组-重装";
-            player.RankColor = "cyan";
         }
 
         protected override void SubscribeEvents() { Exiled.Events.Handlers.Player.TogglingNoClip += OnAbilityKey; base.SubscribeEvents(); }
@@ -116,8 +112,6 @@ namespace SCP5K.SCPFouRole
         {
             var gateA = Room.Get(RoomType.EzGateA);
             player.Position = gateA != null ? gateA.Position + Vector3.up * 2.5f : new Vector3(69.939f, 320.33f, -44.94f) + Vector3.up * 2.5f;
-            player.RankName = "GOC打击小组-中士";
-            player.RankColor = "cyan";
         }
 
         protected override void SubscribeEvents() { Exiled.Events.Handlers.Player.TogglingNoClip += OnAbilityKey; base.SubscribeEvents(); }
@@ -155,8 +149,6 @@ namespace SCP5K.SCPFouRole
         {
             var gateA = Room.Get(RoomType.EzGateA);
             player.Position = gateA != null ? gateA.Position + Vector3.up * 2.5f : new Vector3(69.939f, 320.33f, -44.94f) + Vector3.up * 2.5f;
-            player.RankName = "GOC打击小组-列兵";
-            player.RankColor = "cyan";
         }
     }
 

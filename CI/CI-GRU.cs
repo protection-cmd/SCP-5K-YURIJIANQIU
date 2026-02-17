@@ -38,8 +38,6 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "green";
-                player.RankName = "CI-GRU-指挥官";
                 player.EnableEffect(EffectType.NightVision);
 
                 player.ClearInventory();
@@ -76,8 +74,6 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "green";
-                player.RankName = "CI-GRU-雷泽诺夫";
                 player.EnableEffect(EffectType.NightVision);
 
                 player.ClearInventory();
@@ -121,8 +117,6 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "green";
-                player.RankName = "CI-GRU-重装";
                 player.EnableEffect(EffectType.NightVision);
 
                 player.ClearInventory();
@@ -159,8 +153,6 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "green";
-                player.RankName = "CI-GRU-步枪手";
                 player.EnableEffect(EffectType.NightVision);
 
                 player.ClearInventory();

@@ -29,8 +29,6 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "red";
-                player.RankName = "SCP-682";
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
 

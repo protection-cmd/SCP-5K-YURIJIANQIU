@@ -3,8 +3,6 @@ using Exiled.API.Features.Core.UserSettings;
 using System.Collections.Generic;
 using UnityEngine;
 using UserSettings.ServerSpecific;
-using SCP5K.LCZRole;
-using SCP5K.SCPFouRole;
 
 namespace SCP5K.SCPFouRole
 {
@@ -12,239 +10,105 @@ namespace SCP5K.SCPFouRole
     {
         internal static IEnumerable<SettingBase> _settings;
 
-        // 定义SSS设置ID
-        public const int NU7_COMMANDER_ABILITY_KEYBIND_ID = 100;
+        // Nu-7 A连
+        public const int NU7A_CMDR_SKILL1_ID = 110;
+        public const int NU7A_CMDR_SKILL2_ID = 111;
+        public const int NU7A_JIFENG_SKILL_ID = 112;
+
+        // Nu-7 B连
+        public const int NU7B_CMDR_SKILL1_ID = 113;
+        public const int NU7B_CMDR_SKILL2_ID = 114;
+        public const int NU7B_TIEXUE_SKILL1_ID = 115;
+        public const int NU7B_TIEXUE_SKILL2_ID = 116;
+
         public const int ATHLETE_ABILITY_KEYBIND_ID = 101;
         public const int GOC_COMMANDER_ABILITY_KEYBIND_ID = 102;
         public const int GOC_HEAVY_ABILITY_KEYBIND_ID = 103;
         public const int GOC_SERGEANT_ABILITY_KEYBIND_ID = 104;
-
-        // 添加SCP-682设置ID
         public const int SCP682_ABHORRENCE_ABILITY_KEYBIND_ID = 105;
         public const int SCP682_PITIFUL_ABILITY_KEYBIND_ID = 106;
-
-        // 添加CI雷泽诺夫设置ID
         public const int CI_RAZNOV_COIN_ABILITY_KEYBIND_ID = 107;
 
         [System.Obsolete]
         public static void Register()
         {
-            // 注册按键绑定事件
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived += OnCommanderAbilityKeybind;
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived += OnAthleteAbilityKeybind;
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived += OnGOCCommanderAbilityKeybind;
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived += OnGOCHeavyAbilityKeybind;
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived += OnGOCSergeantAbilityKeybind;
+            ServerSpecificSettingsSync.ServerOnSettingValueReceived += OnAbilityKeybindsReceived;
 
-            // 注册SCP-682按键绑定事件
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived += OnSCP682AbhorrenceKeybind;
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived += OnSCP682PitifulKeybind;
+            _settings = new SettingBase[]
+            {
+                new HeaderSetting("SCP基金会 Nu-7-A连","",false),
+                new KeybindSetting(NU7A_CMDR_SKILL1_ID, "指挥官-先发制人", KeyCode.G, hintDescription: "设置锚点20秒后强行返回(CD 60s)"),
+                new KeybindSetting(NU7A_CMDR_SKILL2_ID, "指挥官-全军出击", KeyCode.H, hintDescription: "存活队友20%加速持续10秒(CD 60s)"),
+                new KeybindSetting(NU7A_JIFENG_SKILL_ID, "疾风-无畏无惧", KeyCode.G, hintDescription: "自身50%减伤+20%加速持续10秒(CD 40s)"),
 
-            // 注册CI雷泽诺夫按键绑定事件
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived += OnCIRaznovCoinKeybind;
-
-            _settings =
-            [
-                new HeaderSetting("SCP基金会 Nu-7-落锤","",false),
-                new KeybindSetting(NU7_COMMANDER_ABILITY_KEYBIND_ID, "战术协调能力", KeyCode.G,
-                    hintDescription: "按下使用战术协调能力，牺牲队友血量换取伤害抗性"),
+                new HeaderSetting("SCP基金会 Nu-7-B连","",false),
+                new KeybindSetting(NU7B_CMDR_SKILL1_ID, "指挥官-献祭过往", KeyCode.G, hintDescription: "记录坐标3秒后大清算(单次技能)"),
+                new KeybindSetting(NU7B_CMDR_SKILL2_ID, "指挥官-画地为牢", KeyCode.H, hintDescription: "禁锢周围非基金会阵营1.5秒(CD 60s)"),
+                new KeybindSetting(NU7B_TIEXUE_SKILL1_ID, "铁血-再著诗篇", KeyCode.G, hintDescription: "立刻获得一把囚鸟(CD 120s)"),
+                new KeybindSetting(NU7B_TIEXUE_SKILL2_ID, "铁血-冲，冲，冲！", KeyCode.H, hintDescription: "加速并造成2倍伤害持续5秒(CD 60s)"),
 
                 new HeaderSetting("轻收容阵营","",false),
-                new KeybindSetting(ATHLETE_ABILITY_KEYBIND_ID, "爆发极限", KeyCode.G,
-                    hintDescription: "按下使用爆发极限，短时间内大幅提升移动速度"),
+                new KeybindSetting(ATHLETE_ABILITY_KEYBIND_ID, "爆发极限", KeyCode.G, hintDescription: "短时间内大幅提升移动速度"),
 
-                // 添加GOC设置
                 new HeaderSetting("全球超自然联盟打击小组","",false),
-                new KeybindSetting(GOC_COMMANDER_ABILITY_KEYBIND_ID, "指挥官-静谧行动", KeyCode.G,
-                    hintDescription: "按下使用静谧行动，获得高额虚化效果持续10秒（60秒冷却）"),
-                new KeybindSetting(GOC_HEAVY_ABILITY_KEYBIND_ID, "凝神静气", KeyCode.G,
-                    hintDescription: "按下使用凝神静气，获得50%伤害抗性持续5秒（30秒冷却）"),
-                new KeybindSetting(GOC_SERGEANT_ABILITY_KEYBIND_ID, "生命付之一炬", KeyCode.G,
-                    hintDescription: "按下使用生命付之一炬，获得护盾和名刀但生命上限降至75（一次性能力）"),
-                
-                // 添加SCP-682设置
+                new KeybindSetting(GOC_COMMANDER_ABILITY_KEYBIND_ID, "指挥官-静谧行动", KeyCode.G, hintDescription: "获得高额虚化效果持续10秒"),
+                new KeybindSetting(GOC_HEAVY_ABILITY_KEYBIND_ID, "凝神静气", KeyCode.G, hintDescription: "获得50%伤害抗性持续5秒"),
+                new KeybindSetting(GOC_SERGEANT_ABILITY_KEYBIND_ID, "生命付之一炬", KeyCode.G, hintDescription: "获得护盾但生命上限降至75(一次性)"),
+
                 new HeaderSetting("SCP-682 不灭孽蜥","",false),
-                new KeybindSetting(SCP682_ABHORRENCE_ABILITY_KEYBIND_ID, "憎恶", KeyCode.G,
-                    hintDescription: "按下激活憎恶能力，普通攻击附带心脏骤停效果20秒（50秒冷却）"),
-                new KeybindSetting(SCP682_PITIFUL_ABILITY_KEYBIND_ID, "可悲", KeyCode.H,
-                    hintDescription: "按下激活可悲能力，每秒回复10HP，持续10秒（50秒冷却）"),
-                
-                // 添加混沌分裂者GRU设置
+                new KeybindSetting(SCP682_ABHORRENCE_ABILITY_KEYBIND_ID, "憎恶", KeyCode.G, hintDescription: "普攻附带心脏骤停20秒"),
+                new KeybindSetting(SCP682_PITIFUL_ABILITY_KEYBIND_ID, "可悲", KeyCode.H, hintDescription: "每秒回复10HP持续10秒"),
+
                 new HeaderSetting("混沌分裂者GRU小组","",false),
-                new KeybindSetting(CI_RAZNOV_COIN_ABILITY_KEYBIND_ID, "雷泽诺夫-小心脚下", KeyCode.G,
-                    hintDescription: "按下重新获得一个硬币（60秒冷却）")
-            ];
+                new KeybindSetting(CI_RAZNOV_COIN_ABILITY_KEYBIND_ID, "雷泽诺夫-小心脚下", KeyCode.G, hintDescription: "重新获得一个硬币")
+            };
 
             SettingBase.Register(_settings);
         }
 
         public static void Unregister()
         {
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived -= OnCommanderAbilityKeybind;
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived -= OnAthleteAbilityKeybind;
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived -= OnGOCCommanderAbilityKeybind;
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived -= OnGOCHeavyAbilityKeybind;
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived -= OnGOCSergeantAbilityKeybind;
-
-            // 注销SCP-682事件
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived -= OnSCP682AbhorrenceKeybind;
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived -= OnSCP682PitifulKeybind;
-
-            // 注销CI雷泽诺夫事件
-            ServerSpecificSettingsSync.ServerOnSettingValueReceived -= OnCIRaznovCoinKeybind;
+            ServerSpecificSettingsSync.ServerOnSettingValueReceived -= OnAbilityKeybindsReceived;
         }
 
-        private static void OnCommanderAbilityKeybind(ReferenceHub referenceHub, ServerSpecificSettingBase settingBase)
+        private static void OnAbilityKeybindsReceived(ReferenceHub referenceHub, ServerSpecificSettingBase settingBase)
         {
-            // 检查是否是Nu-7指挥官能力按键
-            if (settingBase is not SSKeybindSetting keybindSetting ||
-                keybindSetting.SettingId != NU7_COMMANDER_ABILITY_KEYBIND_ID ||
-                !keybindSetting.SyncIsPressed)
-                return;
+            if (settingBase is not SSKeybindSetting keybindSetting || !keybindSetting.SyncIsPressed) return;
+            if (!Player.TryGet(referenceHub, out Player player)) return;
 
-            if (!Player.TryGet(referenceHub, out Player player))
-                return;
+            switch (keybindSetting.SettingId)
+            {
+                case NU7A_CMDR_SKILL1_ID:
+                    if (Nu7ACommander.Instance.Check(player)) Nu7HammerDown.ExecuteNu7ACmdrSkill1(player); break;
+                case NU7A_CMDR_SKILL2_ID:
+                    if (Nu7ACommander.Instance.Check(player)) Nu7HammerDown.ExecuteNu7ACmdrSkill2(player); break;
+                case NU7A_JIFENG_SKILL_ID:
+                    if (Nu7AJiFeng.Instance.Check(player)) Nu7HammerDown.ExecuteNu7AJiFengSkill(player); break;
 
-            // 检查玩家是否是Nu-7指挥官
-            if (!Nu7HammerDown.IsNu7Member(player) ||
-                !Nu7HammerDown.IsCommander(player))
-                return;
+                case NU7B_CMDR_SKILL1_ID:
+                    if (Nu7BCommander.Instance.Check(player)) Nu7HammerDown.ExecuteNu7BCmdrSkill1(player); break;
+                case NU7B_CMDR_SKILL2_ID:
+                    if (Nu7BCommander.Instance.Check(player)) Nu7HammerDown.ExecuteNu7BCmdrSkill2(player); break;
+                case NU7B_TIEXUE_SKILL1_ID:
+                    if (Nu7BTieXue.Instance.Check(player)) Nu7HammerDown.ExecuteNu7BTieXueSkill1(player); break;
+                case NU7B_TIEXUE_SKILL2_ID:
+                    if (Nu7BTieXue.Instance.Check(player)) Nu7HammerDown.ExecuteNu7BTieXueSkill2(player); break;
 
-            // 触发指挥官能力
-            Nu7HammerDown.ExecuteCommanderAbilityFromKeybind(player);
-        }
-
-        private static void OnAthleteAbilityKeybind(ReferenceHub referenceHub, ServerSpecificSettingBase settingBase)
-        {
-            // 检查是否是运动员能力按键
-            if (settingBase is not SSKeybindSetting keybindSetting ||
-                keybindSetting.SettingId != ATHLETE_ABILITY_KEYBIND_ID ||
-                !keybindSetting.SyncIsPressed)
-                return;
-
-            if (!Player.TryGet(referenceHub, out Player player))
-                return;
-
-            // 检查玩家是否是运动员
-            if (!DDRunning.IsAthlete(player))
-                return;
-
-            // 触发运动员爆发极限能力
-            DDRunning.ActivateAthleteAbility(player);
-        }
-
-        // GOC指挥官能力按键绑定处理
-        private static void OnGOCCommanderAbilityKeybind(ReferenceHub referenceHub, ServerSpecificSettingBase settingBase)
-        {
-            if (settingBase is not SSKeybindSetting keybindSetting ||
-                keybindSetting.SettingId != GOC_COMMANDER_ABILITY_KEYBIND_ID ||
-                !keybindSetting.SyncIsPressed)
-                return;
-
-            if (!Player.TryGet(referenceHub, out Player player))
-                return;
-
-            // 检查玩家是否是GOC指挥官
-            if (!GOCTeam.IsGOCMember(player) || !GOCTeam.IsCommander(player))
-                return;
-
-            // 触发指挥官能力
-            GOCTeam.ExecuteCommanderAbilityFromKeybind(player);
-        }
-
-        // GOC重装能力按键绑定处理
-        private static void OnGOCHeavyAbilityKeybind(ReferenceHub referenceHub, ServerSpecificSettingBase settingBase)
-        {
-            if (settingBase is not SSKeybindSetting keybindSetting ||
-                keybindSetting.SettingId != GOC_HEAVY_ABILITY_KEYBIND_ID ||
-                !keybindSetting.SyncIsPressed)
-                return;
-
-            if (!Player.TryGet(referenceHub, out Player player))
-                return;
-
-            // 检查玩家是否是GOC重装
-            if (!GOCTeam.IsGOCMember(player) || !GOCTeam.IsHeavy(player))
-                return;
-
-            // 触发重装能力
-            GOCTeam.ExecuteHeavyAbilityFromKeybind(player);
-        }
-
-        // GOC中士能力按键绑定处理
-        private static void OnGOCSergeantAbilityKeybind(ReferenceHub referenceHub, ServerSpecificSettingBase settingBase)
-        {
-            if (settingBase is not SSKeybindSetting keybindSetting ||
-                keybindSetting.SettingId != GOC_SERGEANT_ABILITY_KEYBIND_ID ||
-                !keybindSetting.SyncIsPressed)
-                return;
-
-            if (!Player.TryGet(referenceHub, out Player player))
-                return;
-
-            // 检查玩家是否是GOC中士
-            if (!GOCTeam.IsGOCMember(player) || !GOCTeam.IsSergeant(player))
-                return;
-
-            // 触发中士能力
-            GOCTeam.ExecuteSergeantAbilityFromKeybind(player);
-        }
-
-        // SCP-682憎恶能力按键绑定处理
-        private static void OnSCP682AbhorrenceKeybind(ReferenceHub referenceHub, ServerSpecificSettingBase settingBase)
-        {
-            if (settingBase is not SSKeybindSetting keybindSetting ||
-                keybindSetting.SettingId != SCP682_ABHORRENCE_ABILITY_KEYBIND_ID ||
-                !keybindSetting.SyncIsPressed)
-                return;
-
-            if (!Player.TryGet(referenceHub, out Player player))
-                return;
-
-            // 检查玩家是否是SCP-682
-            if (!SCP682.IsSCP682(player))
-                return;
-
-            // 触发憎恶能力
-            SCP682.ExecuteAbhorrenceAbilityFromKeybind(player);
-        }
-
-        // SCP-682可悲能力按键绑定处理
-        private static void OnSCP682PitifulKeybind(ReferenceHub referenceHub, ServerSpecificSettingBase settingBase)
-        {
-            if (settingBase is not SSKeybindSetting keybindSetting ||
-                keybindSetting.SettingId != SCP682_PITIFUL_ABILITY_KEYBIND_ID ||
-                !keybindSetting.SyncIsPressed)
-                return;
-
-            if (!Player.TryGet(referenceHub, out Player player))
-                return;
-
-            // 检查玩家是否是SCP-682
-            if (!SCP682.IsSCP682(player))
-                return;
-
-            // 触发可悲能力
-            SCP682.ExecutePitifulAbilityFromKeybind(player);
-        }
-
-        // CI雷泽诺夫硬币能力按键绑定处理
-        private static void OnCIRaznovCoinKeybind(ReferenceHub referenceHub, ServerSpecificSettingBase settingBase)
-        {
-            if (settingBase is not SSKeybindSetting keybindSetting ||
-                keybindSetting.SettingId != CI_RAZNOV_COIN_ABILITY_KEYBIND_ID ||
-                !keybindSetting.SyncIsPressed)
-                return;
-
-            if (!Player.TryGet(referenceHub, out Player player))
-                return;
-
-            // 检查玩家是否是雷泽诺夫
-            if (!CIGRU.IsRaznov(player))
-                return;
-
-            // 触发雷泽诺夫的硬币能力
-            CIGRU.ExecuteRaznovCoinAbilityFromKeybind(player);
+                case ATHLETE_ABILITY_KEYBIND_ID:
+                    if (SCP5K.LCZRole.DDRunning.IsAthlete(player)) SCP5K.LCZRole.DDRunning.ActivateAthleteAbility(player); break;
+                case GOC_COMMANDER_ABILITY_KEYBIND_ID:
+                    if (GOCTeam.IsCommander(player)) GOCTeam.ExecuteCommanderAbilityFromKeybind(player); break;
+                case GOC_HEAVY_ABILITY_KEYBIND_ID:
+                    if (GOCTeam.IsHeavy(player)) GOCTeam.ExecuteHeavyAbilityFromKeybind(player); break;
+                case GOC_SERGEANT_ABILITY_KEYBIND_ID:
+                    if (GOCTeam.IsSergeant(player)) GOCTeam.ExecuteSergeantAbilityFromKeybind(player); break;
+                case SCP682_ABHORRENCE_ABILITY_KEYBIND_ID:
+                    if (SCP682.IsSCP682(player)) SCP682.ExecuteAbhorrenceAbilityFromKeybind(player); break;
+                case SCP682_PITIFUL_ABILITY_KEYBIND_ID:
+                    if (SCP682.IsSCP682(player)) SCP682.ExecutePitifulAbilityFromKeybind(player); break;
+                case CI_RAZNOV_COIN_ABILITY_KEYBIND_ID:
+                    if (CIGRU.IsRaznov(player)) CIGRU.ExecuteRaznovCoinAbilityFromKeybind(player); break;
+            }
         }
     }
 }

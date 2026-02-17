@@ -31,9 +31,6 @@ namespace SCP5K.LCZRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-
-                player.RankColor = "orange";
-                player.RankName = "LCZ-D-9341";
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
 
