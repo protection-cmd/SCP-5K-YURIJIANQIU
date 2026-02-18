@@ -22,7 +22,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "GOC打击小组-指挥官";
         public override int MaxHealth { get; set; } = 150;
 
-        public override string Description { get; set; } = "GOC 指挥官\n\n<color=red>生命值: 150</color>\n<color=yellow>能力: 静谧行动（60秒冷却）</color>\n<color=green>使用能力后将获得短暂的隐身效果，持续10秒</color>";
+        public override string Description { get; set; } 
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -60,7 +60,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "GOC打击小组-重装";
         public override int MaxHealth { get; set; } = 200;
 
-        public override string Description { get; set; } = "GOC 重装\n\n<color=red>生命值: 200</color>\n<color=yellow>能力: 凝神静气（30秒冷却）</color>\n<color=green>使用能力后将获得短暂的伤害减免效果，持续5秒</color>";
+        public override string Description { get; set; } 
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -97,7 +97,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "GOC打击小组-中士";
         public override int MaxHealth { get; set; } = 100;
 
-        public override string Description { get; set; } = "GOC 中士\n\n<color=red>生命值: 100</color>\n<color=yellow>能力: 生命付之一炬（一次性）</color>\n<color=green>牺牲部分生命值，获得短暂强大增益</color>";
+        public override string Description { get; set; } 
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -134,7 +134,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "GOC打击小组-列兵";
         public override int MaxHealth { get; set; } = 120;
 
-        public override string Description { get; set; } = "GOC打击小组-列兵\n\n<color=red>生命值: 120</color>";
+        public override string Description { get; set; } 
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {

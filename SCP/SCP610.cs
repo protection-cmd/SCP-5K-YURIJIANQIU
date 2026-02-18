@@ -19,7 +19,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "SCP-610-母体";
         public override int MaxHealth { get; set; } = 1000;
 
-        public override string Description { get; set; } = "SCP-610 - 母体\n\n<color=red>生命值: 1000</color>\n能力: 附近所有SCP-610成员获得增强";
+        public override string Description { get; set; } 
 
         protected override void RoleAdded(Player player)
         {
@@ -54,7 +54,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "SCP-610-喷射体";
         public override int MaxHealth { get; set; } = 600;
 
-        public override string Description { get; set; } = "SCP-610 - 喷射体\n\n<color=red>生命值: 600</color>\n配有COM15手枪";
+        public override string Description { get; set; } 
 
         public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType> { ItemType.GunCOM15 };
 
@@ -87,7 +87,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "SCP-610-子个体";
         public override int MaxHealth { get; set; } = 400;
 
-        public override string Description { get; set; } = "SCP-610 - 子个体\n\n<color=red>生命值: 400</color>";
+        public override string Description { get; set; } 
 
         protected override void RoleAdded(Player player)
         {

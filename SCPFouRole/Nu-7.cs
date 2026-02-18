@@ -89,7 +89,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "Nu-7 落锤-A连指挥官";
         public override int MaxHealth { get; set; } = 150;
 
-        public override string Description { get; set; } = "Nu-7-A连 指挥官\n<color=yellow>技能1: 先发制人(设置锚点延迟返回)\n技能2: 全军出击(A连群体加速)</color>";
+        public override string Description { get; set; } 
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -115,7 +115,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "Nu-7 落锤-A连-疾风";
         public override int MaxHealth { get; set; } = 120;
 
-        public override string Description { get; set; } = "Nu-7-A连 疾风\n<color=yellow>技能: 无畏，无惧(大幅度伤害减免与加速)</color>";
+        public override string Description { get; set; } 
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -141,7 +141,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "Nu-7 落锤-A连列兵";
         public override int MaxHealth { get; set; } = 100;
 
-        public override string Description { get; set; } = "Nu-7-A连 列兵";
+        public override string Description { get; set; } 
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -168,7 +168,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "Nu-7 落锤-B连指挥官";
         public override int MaxHealth { get; set; } = 100;
 
-        public override string Description { get; set; } = "Nu-7-B连 指挥官\n<color=yellow>技能1: 献祭过往(同归于尽领域)\n技能2: 画地为牢(群体禁锢敌方)</color>";
+        public override string Description { get; set; } 
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -194,7 +194,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "Nu-7 落锤-B连铁血";
         public override int MaxHealth { get; set; } = 120;
 
-        public override string Description { get; set; } = "Nu-7-B连 铁血\n<color=yellow>技能1: 再著诗篇(获得囚鸟)\n技能2: 冲，冲，冲！(移速提升，伤害翻倍)</color>";
+        public override string Description { get; set; } 
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -220,7 +220,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "Nu-7 落锤-B连列兵";
         public override int MaxHealth { get; set; } = 100;
 
-        public override string Description { get; set; } = "Nu-7-B连 列兵";
+        public override string Description { get; set; } 
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {

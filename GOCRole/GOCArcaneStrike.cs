@@ -27,7 +27,7 @@ namespace SCP5K
         public override string CustomInfo { get; set; } = "GOC奇术打击小组-指挥官";
         public override int MaxHealth { get; set; } = 150;
 
-        public override string Description { get; set; } = "GOC奇术打击小组-指挥官\n\n<color=cyan>血量提升至150</color>";
+        public override string Description { get; set; } 
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -61,7 +61,7 @@ namespace SCP5K
         public override string CustomInfo { get; set; } = "GOC奇术打击小组-中士";
         public override int MaxHealth { get; set; } = 120;
 
-        public override string Description { get; set; } = "GOC奇术打击小组-中士\n\n<color=orange>血量提升至120</color>";
+        public override string Description { get; set; } 
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {

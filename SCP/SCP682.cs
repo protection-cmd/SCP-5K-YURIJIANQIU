@@ -20,7 +20,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "SCP-682";
         public override int MaxHealth { get; set; } = 6000;
 
-        public override string Description { get; set; } = "SCP-682 - 不灭孽蜥\n\n<color=red>生命值: 6000</color>\n拥有憎恶与可悲两大技能";
+        public override string Description { get; set; } 
 
         protected override void RoleAdded(Player player)
         {

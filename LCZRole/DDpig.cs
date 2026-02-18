@@ -17,7 +17,7 @@ namespace SCP5K.LCZRole
         public override string CustomInfo { get; set; } = "良子";
         public override int MaxHealth { get; set; } = 250;
 
-        public override string Description { get; set; } = "特殊D级人员 - 味真足\n\n<color=orange>血量提升至250</color>";
+        public override string Description { get; set; } 
 
         protected override void RoleAdded(Player player)
         {

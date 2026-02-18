@@ -23,7 +23,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "CI-GRU-指挥官";
         public override int MaxHealth { get; set; } = 120;
 
-        public override string Description { get; set; } = "混沌分裂者GRU小组 - 指挥官\n\n<color=green>血量提升至120</color>";
+        public override string Description { get; set; }
 
         public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -59,7 +59,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "CI-GRU-雷泽诺夫";
         public override int MaxHealth { get; set; } = 100;
 
-        public override string Description { get; set; } = "混沌分裂者GRU小组 - 雷泽诺夫\n\n<color=yellow>拥有部署地雷与呼叫支援的特殊能力</color>";
+        public override string Description { get; set; } 
 
         public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -102,7 +102,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "CI-GRU-重装";
         public override int MaxHealth { get; set; } = 150;
 
-        public override string Description { get; set; } = "混沌分裂者GRU小组 - 重装\n\n<color=green>血量提升至150</color>";
+        public override string Description { get; set; } 
 
         public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -138,7 +138,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "CI-GRU-步枪手";
         public override int MaxHealth { get; set; } = 100;
 
-        public override string Description { get; set; } = "混沌分裂者GRU小组 - 步枪手";
+        public override string Description { get; set; } 
 
         public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {

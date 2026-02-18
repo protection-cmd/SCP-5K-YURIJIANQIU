@@ -21,7 +21,7 @@ namespace SCP5K.LCZRole
         public override string CustomInfo { get; set; } = "D9341";
         public override int MaxHealth { get; set; } = 100;
 
-        public override string Description { get; set; } = "特殊D级人员 - D-9341\n\n<color=yellow>拥有保存与读取进度的能力</color>";
+        public override string Description { get; set; } 
 
         protected override void RoleAdded(Player player)
         {

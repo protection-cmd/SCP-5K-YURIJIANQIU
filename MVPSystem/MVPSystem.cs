@@ -8,6 +8,9 @@ using MEC;
 using System;
 using System.Linq;
 
+// ★ 引用 YuRiLS 的命名空间 (确保已添加 YuRiLS.dll 引用)
+using YuRiLS.PlayerDataSystem;
+
 namespace SCP5K.MVPSystem
 {
     public class MVPSystem
@@ -42,35 +45,58 @@ namespace SCP5K.MVPSystem
                     mvpDamage = MvpEvent.PlayerDamageRecord.ContainsKey(mvpPlayer) ?
                         MvpEvent.PlayerDamageRecord[mvpPlayer] : 0;
 
-                    // 首先显示MVP公告
+                    // 1. 显示MVP公告
                     AnnounceMVP(mvpPlayer, mvpScore, mvpKills, mvpDamage);
 
-                    // 写入MVP记录文件
+                    // 2. ★【核心修改】直接调用 YuRiLS API 发放奖励 ★
+                    // 不再依赖文件读写，直接通过代码通讯
+                    if (mvpPlayer != null)
+                    {
+                        try
+                        {
+                            // 发放 10 经验
+                            PlayerDataManager.Instance.AddExperience(mvpPlayer.UserId, 10);
+
+                            // 发放 2 迷途 (CurrencyA)
+                            PlayerDataManager.Instance.AddCurrencyA(mvpPlayer.UserId, 2);
+
+                            Log.Info($"[SCP-5K] 已通过API向 YuRiLS 发送 MVP 奖励 (10经验, 2迷途) - 玩家: {mvpPlayer.Nickname}");
+
+                            // (可选) 给玩家发个提示
+                            mvpPlayer.ShowHint("<color=#FFD700>获得 MVP 奖励: +10 经验, +2 迷途</color>", 5f);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error($"[SCP-5K] 调用 YuRiLS API 失败 (请检查 YuRiLS 是否已安装): {ex}");
+                        }
+                    }
+
+                    // 3. (可选) 依然写入记录文件作为备份，或者你可以注释掉下面这块
+                    /*
                     bool recordWritten = MVPRoundRecord.Instance.WriteMVPRecord(mvpPlayer, mvpScore, mvpKills, mvpDamage);
                     if (recordWritten)
                     {
-                        Log.Info($"MVP记录已保存，等待LS插件处理");
+                        Log.Info($"MVP记录已保存 (本地备份)");
                     }
+                    */
 
-                    // 延迟2秒显示排行榜
+                    // 延迟显示排行榜和个人数据
                     Timing.CallDelayed(1f, () => ShowTopPlayers(playerScores));
-
-                    // 延迟4秒显示个人数据
                     Timing.CallDelayed(1f, () => ShowPersonalStatsToEachPlayer(playerScores));
                 }
                 else
                 {
                     AnnounceNoMVP();
-                    // 即使没有MVP也显示个人数据
                     Timing.CallDelayed(2f, () => ShowPersonalStatsToEachPlayer(playerScores));
                 }
             }
             else
             {
-                // 如果MVP系统未启用，也显示个人数据
                 Timing.CallDelayed(2f, () => ShowPersonalStatsToEachPlayer(CalculatePlayerScores()));
             }
         }
+
+        // --- 下面的代码保持不变 ---
 
         private Dictionary<Player, double> CalculatePlayerScores()
         {
@@ -79,75 +105,40 @@ namespace SCP5K.MVPSystem
             foreach (var player in Player.List)
             {
                 double finalScore = 0;
-
-                // 基础分数计算（击杀+伤害）
                 int killScore = MvpEvent.PlayerKillRecord.ContainsKey(player) ? MvpEvent.PlayerKillRecord[player] : 0;
                 int damage = MvpEvent.PlayerDamageRecord.ContainsKey(player) ? MvpEvent.PlayerDamageRecord[player] : 0;
                 finalScore = killScore + (damage * 0.01);
-
                 playerScores[player] = finalScore;
             }
-
             return playerScores;
         }
 
-        // 显示得分前五名的方法
         private void ShowTopPlayers(Dictionary<Player, double> playerScores)
         {
-            // 获取得分最高的前5名玩家
-            var topPlayers = playerScores
-                .OrderByDescending(kv => kv.Value)
-                .Take(5)
-                .ToList();
-
-            // 构建排行榜文本
-            string leaderboardText = "<align=right><size=35><color=#FFFF00>=== 本局得分排行榜 ===</color></size>\n";
-            leaderboardText += "<size=30>"; // 排行榜内容使用30号字
+            var topPlayers = playerScores.OrderByDescending(kv => kv.Value).Take(5).ToList();
+            string leaderboardText = "<align=right><size=35><color=#FFFF00>=== 本局得分排行榜 ===</color></size>\n<size=30>";
 
             for (int i = 0; i < topPlayers.Count; i++)
             {
                 var player = topPlayers[i].Key;
                 double score = topPlayers[i].Value;
                 string formattedScore = FormatScore(score);
-
-                int kills = MvpEvent.PlayerActualKills.ContainsKey(player) ?
-                    MvpEvent.PlayerActualKills[player] : 0;
-                int damage = MvpEvent.PlayerDamageRecord.ContainsKey(player) ?
-                    MvpEvent.PlayerDamageRecord[player] : 0;
-
+                int kills = MvpEvent.PlayerActualKills.ContainsKey(player) ? MvpEvent.PlayerActualKills[player] : 0;
+                int damage = MvpEvent.PlayerDamageRecord.ContainsKey(player) ? MvpEvent.PlayerDamageRecord[player] : 0;
                 string playerInfo = $"{i + 1}. {player.Nickname}\n   击杀: {kills} | 伤害: {damage} | 得分: {formattedScore}\n";
-
-                // 根据名次添加不同颜色
-                string color = i == 0 ? "#FFD700" : "#FFFFFF"; // 第一名金色，其他白色
+                string color = i == 0 ? "#FFD700" : "#FFFFFF";
                 leaderboardText += $"<color={color}>{playerInfo}</color>";
             }
-
-            leaderboardText += "</size>"; // 结束内容部分
-
-            // 显示排行榜（10秒后隐藏）
+            leaderboardText += "</size>";
             ShowHintToAllPlayers(leaderboardText, true, 10f);
         }
 
-        // 格式化得分的方法
         private string FormatScore(double score)
         {
-            // 四舍五入到1位小数
             double rounded = Math.Round(score, 1);
-
-            // 检查小数部分是否为0
-            if (rounded % 1 == 0)
-            {
-                // 整数部分直接显示
-                return $"{(int)rounded}";
-            }
-            else
-            {
-                // 有小数时显示为 ">X.X" 格式
-                return $">{rounded:0.0}";
-            }
+            return (rounded % 1 == 0) ? $"{(int)rounded}" : $">{rounded:0.0}";
         }
 
-        // 更新方法：添加duration参数控制显示时间
         private void ShowHintToAllPlayers(string hintText, bool isLeaderboard = false, float duration = 5f)
         {
             foreach (Player player in Player.List)
@@ -158,31 +149,15 @@ namespace SCP5K.MVPSystem
                 var hint = new HintServiceMeow.Core.Models.Hints.Hint
                 {
                     Text = hintText,
-                    FontSize = 0, // 禁用全局设置，完全使用文本内标签
+                    FontSize = 0,
                     Alignment = isLeaderboard ? HintAlignment.Right : HintAlignment.Center,
-                    // MVP公告在顶部(Y=20)，排行榜在右侧居中(Y=500)
                     YCoordinate = isLeaderboard ? 640 : 115
                 };
-
-                // 添加提示并保存引用
                 display.AddHint(hint);
-
-                // 延迟指定时间后隐藏提示
-                Timing.CallDelayed(duration, () =>
-                {
-                    try
-                    {
-                        hint.Hide = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error($"隐藏提示时出错: {ex.Message}");
-                    }
-                });
+                Timing.CallDelayed(duration, () => { try { hint.Hide = true; } catch (Exception ex) { Log.Error($"隐藏提示时出错: {ex.Message}"); } });
             }
         }
 
-        // 更新AnnounceMVP方法
         private void AnnounceMVP(Player mvpPlayer, int mvpScore, int mvpKills, int mvpDamage)
         {
             string formattedScore = FormatScore(mvpScore);
@@ -192,25 +167,16 @@ namespace SCP5K.MVPSystem
             {
                 string musicName = _musicPlayer.TryPlayMusic(mvpPlayer);
                 string hintText = CreateMVPAnnouncementText(mvpPlayer, formattedScore, musicName, mvpKills, mvpDamage);
-
-                // MVP公告显示15秒
                 ShowHintToAllPlayers(hintText, false, 15f);
             });
         }
 
-        // 更新创建MVP公告文本的方法
         private string CreateMVPAnnouncementText(Player mvpPlayer, string formattedScore, string musicName, int kills, int damage)
         {
-            // 使用50号字显示MVP公告
             string text = $"<size=50><color=#FC0000>本局MVP</color>是 <color=#FFD700>{mvpPlayer.Nickname}</color></size>\n";
             text += $"<size=40>击杀: <color=#FF1493>{kills}</color> | 伤害: <color=red>{damage}</color></size>\n";
             text += $"<size=40>得分: <color=#00FF00>{formattedScore}</color></size>\n<size=40><color=#FF8899>感谢游玩!我们一同于聿日箋秋中，描绘崭新未来!</color></size>";
-
-            if (!string.IsNullOrEmpty(musicName))
-            {
-                text += $"\n<size=35>正在播放MVP专属音乐: <color=#00FFFF>{musicName}</color></size>";
-            }
-
+            if (!string.IsNullOrEmpty(musicName)) text += $"\n<size=35>正在播放MVP专属音乐: <color=#00FFFF>{musicName}</color></size>";
             return text;
         }
 
@@ -218,68 +184,40 @@ namespace SCP5K.MVPSystem
         {
             Log.Info("本局没有符合条件的MVP或MVP数据无效");
             string hintText = "<size=50>本局<color=#FC0000>MVP</color>：虚位以待</size>\n<size=40><color=#FF8899>感谢游玩!我们一同于聿日箋秋中，描绘崭新未来!</color></size>";
-
-            // 无MVP提示显示8秒
             ShowHintToAllPlayers(hintText, false, 8f);
         }
 
-        // 新增：为每个玩家显示个人数据
         private void ShowPersonalStatsToEachPlayer(Dictionary<Player, double> playerScores)
         {
             foreach (var player in Player.List)
             {
-                // 获取玩家数据
-                int kills = MvpEvent.PlayerActualKills.ContainsKey(player) ?
-                    MvpEvent.PlayerActualKills[player] : 0;
-                int damage = MvpEvent.PlayerDamageRecord.ContainsKey(player) ?
-                    MvpEvent.PlayerDamageRecord[player] : 0;
-
-                // 获取玩家得分
-                double score = playerScores.ContainsKey(player) ?
-                    playerScores[player] : 0;
+                int kills = MvpEvent.PlayerActualKills.ContainsKey(player) ? MvpEvent.PlayerActualKills[player] : 0;
+                int damage = MvpEvent.PlayerDamageRecord.ContainsKey(player) ? MvpEvent.PlayerDamageRecord[player] : 0;
+                double score = playerScores.ContainsKey(player) ? playerScores[player] : 0;
                 string formattedScore = FormatScore(score);
 
-                // 构建个人数据文本
-                string personalText = $"<size=25><color=#77DD77>你的本局数据</color>\n";
-                personalText += $"击杀: <color=#FF1493>{kills}</color> | ";
-                personalText += $"伤害: <color=red>{damage}</color>\n";
-                personalText += $"得分: <color=#00FFFF>{formattedScore}</color></size>";
-
-                // 显示个人数据提示 - 右下角（显示15秒）
-                ShowPersonalHint(player, personalText, 25,15f, HintAlignment.Right,860); // 在排行榜下方显示
+                string personalText = $"<size=25><color=#77DD77>你的本局数据</color>\n击杀: <color=#FF1493>{kills}</color> | 伤害: <color=red>{damage}</color>\n得分: <color=#00FFFF>{formattedScore}</color></size>";
+                ShowPersonalHint(player, personalText, 25, 15f, HintAlignment.Right, 860);
             }
         }
 
-        // 更新：显示个人数据提示，添加duration参数
-        private void ShowPersonalHint(Player player, string hintText, int FontSize , float duration, HintAlignment Alignment,int YCoordinate,int XCoordinate=0)
+        private void ShowPersonalHint(Player player, string hintText, int FontSize, float duration, HintAlignment Alignment, int YCoordinate, int XCoordinate = 0)
         {
             var display = PlayerDisplay.Get(player);
             if (display == null) return;
-
 
             var hint = new HintServiceMeow.Core.Models.Hints.Hint
             {
                 Text = hintText,
                 FontSize = FontSize,
                 Alignment = Alignment,
-                YCoordinate = YCoordinate ,
+                YCoordinate = YCoordinate,
                 XCoordinate = XCoordinate
             };
-
             display.AddHint(hint);
-
-            // 延迟指定时间后隐藏提示
             Timing.CallDelayed(duration, () =>
             {
-                try
-                {
-                    hint.Hide = true;
-                    display.RemoveHint(hint);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error($"隐藏个人数据提示时出错: {ex.Message}");
-                }
+                try { hint.Hide = true; display.RemoveHint(hint); } catch (Exception ex) { Log.Error($"隐藏个人数据提示时出错: {ex.Message}"); }
             });
         }
     }

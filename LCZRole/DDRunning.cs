@@ -18,7 +18,7 @@ namespace SCP5K.LCZRole
         public override string CustomInfo { get; set; } = "运动员";
         public override int MaxHealth { get; set; } = 100;
 
-        public override string Description { get; set; } = "特殊D级人员 - 运动员\n\n<color=orange>移动速度提升，拥有爆发极限技能</color>";
+        public override string Description { get; set; } 
 
         protected override void RoleAdded(Player player)
         {

@@ -27,7 +27,7 @@ namespace SCP5K.SCPFouRole
         public override bool KeepInventoryOnSpawn { get; set; } = false;
         public override bool KeepPositionOnSpawn { get; set; } = false;
 
-        public override string Description { get; set; } = "GRU-CI 黑客\n<color=yellow>技能: 骇入 (可无视权限开启任何门)</color>";
+        public override string Description { get; set; } 
 
         public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         { ItemType.GunShotgun, ItemType.Medkit, ItemType.ArmorCombat, ItemType.Adrenaline, ItemType.KeycardChaosInsurgency, ItemType.GunRevolver };
@@ -71,7 +71,7 @@ namespace SCP5K.SCPFouRole
         public override bool KeepInventoryOnSpawn { get; set; } = false;
         public override bool KeepPositionOnSpawn { get; set; } = false;
 
-        public override string Description { get; set; } = "GRU-CI 突破手\n<color=yellow>被动: 专属AK枪械固定造成80点真实伤害(无视护甲)</color>";
+        public override string Description { get; set; } 
 
         public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         { ItemType.GunAK, ItemType.Medkit, ItemType.ArmorCombat, ItemType.Adrenaline, ItemType.KeycardChaosInsurgency };
@@ -119,7 +119,7 @@ namespace SCP5K.SCPFouRole
         public override bool KeepInventoryOnSpawn { get; set; } = false;
         public override bool KeepPositionOnSpawn { get; set; } = false;
 
-        public override string Description { get; set; } = "GRU-CI 爆破手\n<color=yellow>技能: “火力”充足 (按下设定键获得手雷，35s CD)</color>";
+        public override string Description { get; set; } 
 
         public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         { ItemType.GunAK, ItemType.Medkit, ItemType.ArmorCombat, ItemType.Adrenaline, ItemType.KeycardChaosInsurgency, ItemType.GrenadeHE };
@@ -155,7 +155,7 @@ namespace SCP5K.SCPFouRole
         public override bool KeepInventoryOnSpawn { get; set; } = false;
         public override bool KeepPositionOnSpawn { get; set; } = false;
 
-        public override string Description { get; set; } = "GRU-CI 指挥官\n<color=yellow>技能: 高斯放电装置 (按下绑定键获得电炮，单次)</color>";
+        public override string Description { get; set; } 
 
         public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         { ItemType.GunLogicer, ItemType.Medkit, ItemType.ArmorCombat, ItemType.Adrenaline, ItemType.KeycardChaosInsurgency };
@@ -191,7 +191,7 @@ namespace SCP5K.SCPFouRole
         public override bool KeepInventoryOnSpawn { get; set; } = false;
         public override bool KeepPositionOnSpawn { get; set; } = false;
 
-        public override string Description { get; set; } = "GRU-CI 考察员\n<color=yellow>技能1: 寻找真相 (团队加速)\n技能2: 零位能量场牵引 (强制拉取敌方至面前并定身)</color>";
+        public override string Description { get; set; } 
 
         public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         { ItemType.GunShotgun, ItemType.Medkit, ItemType.ArmorCombat, ItemType.KeycardChaosInsurgency, ItemType.Radio };
@@ -227,7 +227,7 @@ namespace SCP5K.SCPFouRole
         public override bool KeepInventoryOnSpawn { get; set; } = false;
         public override bool KeepPositionOnSpawn { get; set; } = false;
 
-        public override string Description { get; set; } = "GRU-CI 士兵\n<color=yellow>0 HS / 0 AHP</color>";
+        public override string Description { get; set; } 
 
         public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         { ItemType.GunAK, ItemType.Medkit, ItemType.ArmorCombat, ItemType.Adrenaline, ItemType.KeycardChaosInsurgency };
@@ -265,7 +265,7 @@ namespace SCP5K.SCPFouRole
         public override bool KeepInventoryOnSpawn { get; set; } = false;
         public override bool KeepPositionOnSpawn { get; set; } = false;
 
-        public override string Description { get; set; } = "GRU-CI 征召兵\n<color=yellow>0 HS / 0 AHP</color>";
+        public override string Description { get; set; } 
 
         public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         { ItemType.GunAK, ItemType.Medkit, ItemType.ArmorCombat, ItemType.Adrenaline, ItemType.KeycardChaosInsurgency };
@@ -340,7 +340,7 @@ namespace SCP5K.SCPFouRole
             {
                 player.ShowHint("<color=red>背包已满，无法获取电炮！</color>", 3f); return;
             }
-            player.AddItem(ItemType.ParticleDisruptor);
+            player.AddItem(ItemType.MicroHID);
             cmdrSkillUsed.Add(player);
             player.ShowHint("<color=cyan>高斯放电装置已启动，你获得了电炮！</color>", 4f);
         }
