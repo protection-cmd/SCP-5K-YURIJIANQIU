@@ -71,29 +71,7 @@ namespace SCP5K.LCZRole
             athleteStates.Remove(player);
         }
 
-        public static void OnRoundStarted()
-        {
-            Timing.CallDelayed(2.5f, () => SelectAthlete());
-        }
-
-        private static void SelectAthlete()
-        {
-            try
-            {
-                var eligiblePlayers = Player.Get(RoleTypeId.ClassD).Where(p =>
-                    string.IsNullOrEmpty(p.RankName) &&
-                    !D9341Role.Instance.Check(p) &&
-                    !AthleteRole.Instance.Check(p) &&
-                    !LiangziRole.Instance.Check(p)).ToList();
-
-                if (eligiblePlayers.Count == 0) return;
-
-                var random = new System.Random();
-                SetPlayerAsAthlete(eligiblePlayers[random.Next(eligiblePlayers.Count)]);
-            }
-            catch (Exception ex) { Log.Error($"选择运动员出错: {ex.Message}"); }
-        }
-
+        // 移除自动选择逻辑，仅保留设置方法
         public static bool SetPlayerAsAthlete(Player player)
         {
             AthleteRole.Instance.AddRole(player);
@@ -132,7 +110,8 @@ namespace SCP5K.LCZRole
             });
         }
 
-        public static void RegisterEvents() { Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted; }
-        public static void UnregisterEvents() { Exiled.Events.Handlers.Server.RoundStarted -= OnRoundStarted; athleteStates.Clear(); }
+        // 移除了 OnRoundStarted 绑定
+        public static void RegisterEvents() { }
+        public static void UnregisterEvents() { athleteStates.Clear(); }
     }
 }

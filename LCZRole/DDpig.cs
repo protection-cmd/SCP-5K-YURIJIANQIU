@@ -35,28 +35,8 @@ namespace SCP5K.LCZRole
 
     public static class DDpig
     {
-        public static void OnRoundStarted()
-        {
-            Timing.CallDelayed(2.5f, () => SelectSpecialDClass());
-        }
-
-        private static void SelectSpecialDClass()
-        {
-            try
-            {
-                var eligiblePlayers = Player.Get(RoleTypeId.ClassD).Where(p =>
-                    string.IsNullOrEmpty(p.RankName) &&
-                    !D9341Role.Instance.Check(p) &&
-                    !AthleteRole.Instance.Check(p) &&
-                    !LiangziRole.Instance.Check(p)).ToList();
-
-                if (eligiblePlayers.Count == 0) return;
-
-                var random = new System.Random();
-                SetPlayerAsSpecialDClass(eligiblePlayers[random.Next(eligiblePlayers.Count)]);
-            }
-            catch (Exception ex) { Log.Error($"选择良子时出错: {ex.Message}"); }
-        }
+        // 这里的自动刷新逻辑已移除，转由 ClassDSpawnManager 统一管理
+        // 仅保留工具方法供管理器调用
 
         public static bool IsSpecialDClass(Player player) => LiangziRole.Instance.Check(player);
 
@@ -66,7 +46,14 @@ namespace SCP5K.LCZRole
             return true;
         }
 
-        public static void RegisterEvents() { Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted; }
-        public static void UnregisterEvents() { Exiled.Events.Handlers.Server.RoundStarted -= OnRoundStarted; }
+        public static void RegisterEvents()
+        {
+            // 不再需要注册回合开始事件
+        }
+
+        public static void UnregisterEvents()
+        {
+            // 不再需要注销回合开始事件
+        }
     }
 }

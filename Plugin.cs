@@ -16,7 +16,7 @@ namespace SCP5K
         public const string Package = "YuRiJianQiu-5K";
         public override string Name => "SCP-5K-YuRiJianQiu";
         public override string Author => "聿日箋秋-Protection";
-        public override Version Version => new Version(1, 0, 0);
+        public override Version Version => new Version(1, 0, 1);
         public override Version RequiredExiledVersion => new Version(9, 10, 2);
 
         public static Plugin Instance;
@@ -74,9 +74,13 @@ namespace SCP5K
                 VanillaSpawnDisabler.RegisterEvents();
             }
 
-            if (Config.EnableSpecialDClass) DDpig.RegisterEvents();
-            if (Config.EnableAthlete) DDRunning.RegisterEvents();
+            // ★ 移除：DDpig 和 DDRunning 的直接事件注册
+            // 它们的逻辑已移交 ClassDSpawnManager 统一管理
 
+            // ★ 新增：D级人员统一刷新管理器
+            ClassDSpawnManager.RegisterEvents();
+
+            // D9341 仍需注册事件以处理丢物品、存档等交互逻辑
             d9341Handler = new D9341EventHandler();
             d9341Handler.RegisterEvents();
 
@@ -110,7 +114,7 @@ namespace SCP5K
             SCP682.RegisterEvents();
             SCP610.RegisterEvents();
 
-            // ★ 注册全新的 GRU-CI 事件管理器
+            // 注册 GRU-CI 事件管理器
             GRUCIManager.RegisterEvents();
 
             if (Config.EnableCustomSpawnManager)
@@ -204,8 +208,13 @@ namespace SCP5K
             Exiled.Events.Handlers.Server.RoundEnded.Unsubscribe(ev => OmegaWarhead.OnRoundEnd());
             Exiled.Events.Handlers.Server.RoundStarted -= CASSIE.OnRoundStarted;
 
-            DDpig.UnregisterEvents();
-            DDRunning.UnregisterEvents();
+            // ★ 移除：旧的注销逻辑
+            // DDpig.UnregisterEvents();
+            // DDRunning.UnregisterEvents();
+
+            // ★ 新增：注销 D级刷新管理器
+            ClassDSpawnManager.UnregisterEvents();
+
             GOCArcaneStrike.UnregisterEvents();
             Nu7HammerDown.UnregisterEvents();
             GOCTeam.UnregisterEvents();
@@ -213,7 +222,7 @@ namespace SCP5K
             SCP682.UnregisterEvents();
             SCP610.UnregisterEvents();
 
-            // ★ 注销新阵营事件
+            // 注销新阵营事件
             GRUCIManager.UnregisterEvents();
 
             CustomSpawnManager.UnregisterEvents();

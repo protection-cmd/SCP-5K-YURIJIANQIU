@@ -72,7 +72,6 @@ namespace SCP5K.LCZRole
     {
         private static Dictionary<Player, D9341State> d9341States = new Dictionary<Player, D9341State>();
         private static bool EscapeTriggered = false;
-        private static bool hasAttemptedAutoSelectThisRound = false;
 
         public static bool IsD9341(Player player) => D9341Role.Instance.Check(player);
         public static void InitializePlayer(Player player) => d9341States[player] = new D9341State();
@@ -89,34 +88,29 @@ namespace SCP5K.LCZRole
             return true;
         }
 
-        public void RegisterEvents() { Exiled.Events.Handlers.Player.DroppingItem += OnDroppingItem; Exiled.Events.Handlers.Player.Dying += OnDying; Exiled.Events.Handlers.Player.Escaping += OnEscaping; Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted; Exiled.Events.Handlers.Server.RoundEnded += OnRoundEnded; }
-        public void UnregisterEvents() { Exiled.Events.Handlers.Player.DroppingItem -= OnDroppingItem; Exiled.Events.Handlers.Player.Dying -= OnDying; Exiled.Events.Handlers.Player.Escaping -= OnEscaping; Exiled.Events.Handlers.Server.RoundStarted -= OnRoundStarted; Exiled.Events.Handlers.Server.RoundEnded -= OnRoundEnded; d9341States.Clear(); }
+        public void RegisterEvents()
+        {
+            Exiled.Events.Handlers.Player.DroppingItem += OnDroppingItem;
+            Exiled.Events.Handlers.Player.Dying += OnDying;
+            Exiled.Events.Handlers.Player.Escaping += OnEscaping;
+            Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;
+        }
+
+        public void UnregisterEvents()
+        {
+            Exiled.Events.Handlers.Player.DroppingItem -= OnDroppingItem;
+            Exiled.Events.Handlers.Player.Dying -= OnDying;
+            Exiled.Events.Handlers.Player.Escaping -= OnEscaping;
+            Exiled.Events.Handlers.Server.RoundStarted -= OnRoundStarted;
+            d9341States.Clear();
+        }
 
         private void OnRoundStarted()
         {
+            // 仅重置游戏状态，不再负责角色分配
             EscapeTriggered = false;
-            hasAttemptedAutoSelectThisRound = false;
             d9341States.Clear();
-
-            if (!Plugin.Instance.Config.AutoSelectD9341) return;
-            hasAttemptedAutoSelectThisRound = true;
-
-            Timing.CallDelayed(2.5f, () =>
-            {
-                var eligiblePlayers = Player.Get(RoleTypeId.ClassD).Where(p =>
-                    string.IsNullOrEmpty(p.RankName) &&
-                    !D9341Role.Instance.Check(p) &&
-                    !AthleteRole.Instance.Check(p) &&
-                    !LiangziRole.Instance.Check(p)).ToList();
-
-                if (eligiblePlayers.Count == 0) return;
-
-                var random = new System.Random();
-                D9341Role.Instance.AddRole(eligiblePlayers[random.Next(eligiblePlayers.Count)]);
-            });
         }
-
-        private void OnRoundEnded(RoundEndedEventArgs ev) { hasAttemptedAutoSelectThisRound = false; }
 
         private void OnDroppingItem(DroppingItemEventArgs ev)
         {
