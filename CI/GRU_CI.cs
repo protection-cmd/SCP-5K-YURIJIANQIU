@@ -22,6 +22,10 @@ namespace SCP5K.SCPFouRole
         public override string Name { get; set; } = "GRU-CI 黑客";
         public override string CustomInfo { get; set; } = "GRU-CI 黑客";
         public override int MaxHealth { get; set; } = 100;
+        public override bool KeepRoleOnChangingRole { get; set; } = false;
+        public override bool KeepRoleOnDeath { get; set; } = false;
+        public override bool KeepInventoryOnSpawn { get; set; } = false;
+        public override bool KeepPositionOnSpawn { get; set; } = false;
 
         public override string Description { get; set; } = "GRU-CI 黑客\n<color=yellow>技能: 骇入 (可无视权限开启任何门)</color>";
 
@@ -34,8 +38,6 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "green";
-                player.RankName = "GRU-CI-黑客";
 
                 player.ClearInventory();
                 foreach (var item in CustomRoleItems) player.AddItem(item);
@@ -64,6 +66,10 @@ namespace SCP5K.SCPFouRole
         public override string Name { get; set; } = "GRU-CI 突破手";
         public override string CustomInfo { get; set; } = "GRU-CI 突破手";
         public override int MaxHealth { get; set; } = 120;
+        public override bool KeepRoleOnChangingRole { get; set; } = false;
+        public override bool KeepRoleOnDeath { get; set; } = false;
+        public override bool KeepInventoryOnSpawn { get; set; } = false;
+        public override bool KeepPositionOnSpawn { get; set; } = false;
 
         public override string Description { get; set; } = "GRU-CI 突破手\n<color=yellow>被动: 专属AK枪械固定造成80点真实伤害(无视护甲)</color>";
 
@@ -76,8 +82,6 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "green";
-                player.RankName = "GRU-CI-突破手";
 
                 player.ClearInventory();
                 foreach (var item in CustomRoleItems) player.AddItem(item);
@@ -110,6 +114,10 @@ namespace SCP5K.SCPFouRole
         public override string Name { get; set; } = "GRU-CI 爆破手";
         public override string CustomInfo { get; set; } = "GRU-CI 爆破手";
         public override int MaxHealth { get; set; } = 110;
+        public override bool KeepRoleOnChangingRole { get; set; } = false;
+        public override bool KeepRoleOnDeath { get; set; } = false;
+        public override bool KeepInventoryOnSpawn { get; set; } = false;
+        public override bool KeepPositionOnSpawn { get; set; } = false;
 
         public override string Description { get; set; } = "GRU-CI 爆破手\n<color=yellow>技能: “火力”充足 (按下设定键获得手雷，35s CD)</color>";
 
@@ -122,8 +130,6 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "green";
-                player.RankName = "GRU-CI-爆破手";
 
                 player.ClearInventory();
                 foreach (var item in CustomRoleItems) player.AddItem(item);
@@ -144,6 +150,10 @@ namespace SCP5K.SCPFouRole
         public override string Name { get; set; } = "GRU-CI 指挥官";
         public override string CustomInfo { get; set; } = "GRU-CI 指挥官";
         public override int MaxHealth { get; set; } = 150;
+        public override bool KeepRoleOnChangingRole { get; set; } = false;
+        public override bool KeepRoleOnDeath { get; set; } = false;
+        public override bool KeepInventoryOnSpawn { get; set; } = false;
+        public override bool KeepPositionOnSpawn { get; set; } = false;
 
         public override string Description { get; set; } = "GRU-CI 指挥官\n<color=yellow>技能: 高斯放电装置 (按下绑定键获得电炮，单次)</color>";
 
@@ -156,8 +166,6 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "green";
-                player.RankName = "GRU-CI-指挥官";
 
                 player.ClearInventory();
                 foreach (var item in CustomRoleItems) player.AddItem(item);
@@ -178,6 +186,10 @@ namespace SCP5K.SCPFouRole
         public override string Name { get; set; } = "GRU-CI 考察员";
         public override string CustomInfo { get; set; } = "GRU-CI 考察员";
         public override int MaxHealth { get; set; } = 150;
+        public override bool KeepRoleOnChangingRole { get; set; } = false;
+        public override bool KeepRoleOnDeath { get; set; } = false;
+        public override bool KeepInventoryOnSpawn { get; set; } = false;
+        public override bool KeepPositionOnSpawn { get; set; } = false;
 
         public override string Description { get; set; } = "GRU-CI 考察员\n<color=yellow>技能1: 寻找真相 (团队加速)\n技能2: 零位能量场牵引 (强制拉取敌方至面前并定身)</color>";
 
@@ -190,8 +202,6 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "green";
-                player.RankName = "GRU-CI-考察员";
 
                 player.ClearInventory();
                 foreach (var item in CustomRoleItems) player.AddItem(item);
@@ -212,6 +222,10 @@ namespace SCP5K.SCPFouRole
         public override string Name { get; set; } = "GRU-CI 士兵";
         public override string CustomInfo { get; set; } = "GRU-CI 士兵";
         public override int MaxHealth { get; set; } = 110;
+        public override bool KeepRoleOnChangingRole { get; set; } = false;
+        public override bool KeepRoleOnDeath { get; set; } = false;
+        public override bool KeepInventoryOnSpawn { get; set; } = false;
+        public override bool KeepPositionOnSpawn { get; set; } = false;
 
         public override string Description { get; set; } = "GRU-CI 士兵\n<color=yellow>0 HS / 0 AHP</color>";
 
@@ -224,8 +238,6 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "green";
-                player.RankName = "GRU-CI-士兵";
 
                 player.ClearInventory();
                 foreach (var item in CustomRoleItems) player.AddItem(item);
@@ -248,6 +260,10 @@ namespace SCP5K.SCPFouRole
         public override string Name { get; set; } = "GRU-CI 征召兵";
         public override string CustomInfo { get; set; } = "GRU-CI 征召兵";
         public override int MaxHealth { get; set; } = 100;
+        public override bool KeepRoleOnChangingRole { get; set; } = false;
+        public override bool KeepRoleOnDeath { get; set; } = false;
+        public override bool KeepInventoryOnSpawn { get; set; } = false;
+        public override bool KeepPositionOnSpawn { get; set; } = false;
 
         public override string Description { get; set; } = "GRU-CI 征召兵\n<color=yellow>0 HS / 0 AHP</color>";
 
@@ -260,8 +276,6 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-                player.RankColor = "green";
-                player.RankName = "GRU-CI-征召兵";
 
                 player.ClearInventory();
                 foreach (var item in CustomRoleItems) player.AddItem(item);

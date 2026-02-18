@@ -35,9 +35,6 @@ namespace SCP5K.Events
                     role.RemoveRole(ev.Player);
                 }
 
-                // 抹除头衔、颜色和信息
-                ev.Player.RankName = string.Empty;
-                ev.Player.RankColor = string.Empty;
                 ev.Player.CustomInfo = string.Empty;
 
                 CleanUpPlayerStates(ev.Player);
