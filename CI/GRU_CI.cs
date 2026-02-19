@@ -26,7 +26,6 @@ namespace SCP5K.SCPFouRole
         public override bool KeepRoleOnDeath { get; set; } = false;
         public override bool KeepInventoryOnSpawn { get; set; } = false;
         public override bool KeepPositionOnSpawn { get; set; } = false;
-
         public override string Description { get; set; } 
 
         public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
@@ -41,11 +40,8 @@ namespace SCP5K.SCPFouRole
 
                 player.ClearInventory();
                 foreach (var item in CustomRoleItems) player.AddItem(item);
-
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
-
-                // 启用无视门禁权限
                 player.IsBypassModeEnabled = true;
                 player.ShowHint("你成为了 GRU-CI 黑客\n<color=yellow>你的便携破解设备允许你开启设施内的任何门！</color>", 10f);
             });
@@ -89,9 +85,8 @@ namespace SCP5K.SCPFouRole
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
 
-                player.ShowHint("你成为了 GRU-CI 突破手\n<color=yellow>你的专属AK枪械经过特殊改装，任何人捡起它都能造成80固定真伤！</color>", 10f);
+                player.ShowHint("你成为了 GRU-CI 突破手\n<color=yellow>你的专属AK枪械经过特殊改装，80伤害！</color>", 10f);
 
-                // 【绑定枪械核心 1】：延迟获取AK序列号并注册到黑名单中
                 Timing.CallDelayed(0.5f, () =>
                 {
                     if (player == null || !player.IsAlive) return;

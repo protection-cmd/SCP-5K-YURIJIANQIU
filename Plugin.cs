@@ -1,13 +1,14 @@
-﻿using System;
-using Exiled.API.Features;
+﻿using Exiled.API.Features;
+using Exiled.CustomRoles.API;
 using Exiled.CustomRoles.API.Features;
+using LabApi.Events.Handlers;
 using Respawning;
 using SCP5K.Events;
 using SCP5K.LCZRole;
 using SCP5K.MVPSystem;
 using SCP5K.SCPFouRole;
+using System;
 using System.IO;
-using Exiled.CustomRoles.API;
 
 namespace SCP5K
 {
@@ -200,31 +201,20 @@ namespace SCP5K
             this.gateC?.UnsubscribeEvents();
             d9341Handler?.UnregisterEvents();
             AmmoEvents.UnRegEvent();
-
-            // 注销清理管家
             SkillCleanupManager.UnregisterEvents();
 
             Exiled.Events.Handlers.Server.RoundStarted -= OmegaWarhead.OnRoundStart;
             Exiled.Events.Handlers.Server.RoundEnded.Unsubscribe(ev => OmegaWarhead.OnRoundEnd());
             Exiled.Events.Handlers.Server.RoundStarted -= CASSIE.OnRoundStarted;
 
-            // ★ 移除：旧的注销逻辑
-            // DDpig.UnregisterEvents();
-            // DDRunning.UnregisterEvents();
-
-            // ★ 新增：注销 D级刷新管理器
             ClassDSpawnManager.UnregisterEvents();
-
             GOCArcaneStrike.UnregisterEvents();
             Nu7HammerDown.UnregisterEvents();
             GOCTeam.UnregisterEvents();
             CIGRU.UnregisterEvents();
             SCP682.UnregisterEvents();
             SCP610.UnregisterEvents();
-
-            // 注销新阵营事件
             GRUCIManager.UnregisterEvents();
-
             CustomSpawnManager.UnregisterEvents();
             VanillaSpawnDisabler.UnregisterEvents();
             SSSSettings.Unregister();

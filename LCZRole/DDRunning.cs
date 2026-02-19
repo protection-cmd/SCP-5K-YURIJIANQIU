@@ -71,7 +71,6 @@ namespace SCP5K.LCZRole
             athleteStates.Remove(player);
         }
 
-        // 移除自动选择逻辑，仅保留设置方法
         public static bool SetPlayerAsAthlete(Player player)
         {
             AthleteRole.Instance.AddRole(player);
