@@ -1,8 +1,6 @@
 ﻿using CommandSystem;
 using Exiled.API.Features;
 using Exiled.Permissions.Extensions;
-using NorthwoodLib;
-using PlayerRoles;
 using ProjectMER.Features;
 using SCP5K.LCZRole;
 using SCP5K.SCPFouRole;
@@ -10,8 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using YuRiLS;
-using YuRiLS.PlayerDataSystem;
 
 namespace SCP5K.Commands
 {

@@ -1,11 +1,6 @@
 ﻿using Exiled.API.Features;
-using Exiled.Events.EventArgs.Player;
 using Exiled.Events.EventArgs.Server;
 using MEC;
-using PlayerRoles;
-using System;
-using System.Collections.Generic;
-
 namespace SCP5K
 {
     public static class VanillaSpawnDisabler

@@ -6,6 +6,7 @@ using MEC;
 using PlayerRoles;
 using ProjectMER.Features;
 using Respawning;
+using SCP5K.Events;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -80,7 +81,8 @@ namespace SCP5K
             // 显示初始提示
             foreach (Player player in Player.List)
             {
-                player.ShowHint("<color=red>奇术打击已激活！30秒后释放...</color>", 10);
+                var message = "<color=red>奇术打击已激活！30秒后释放...</color>";
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "奇术打击已激活");
             }
 
 
@@ -139,7 +141,8 @@ namespace SCP5K
                 // 显示取消提示
                 foreach (Player player in Player.List)
                 {
-                    player.ShowHint("<color=green>奇术打击已取消</color>", 5);
+                    var message = "<color=green>奇术打击已取消</color>";
+                    HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "奇术打击已取消");
                 }
 
                 Log.Info("奇术打击已取消，所有状态已重置");
@@ -177,7 +180,8 @@ namespace SCP5K
                     if (player.IsAlive)
                     {
                         player.EnableEffect(EffectType.Flashed, 4f);
-                        player.ShowHint("<color=white>强烈的奇术能量正在聚集...</color>", 5f);
+                        var message = "<color=white>强烈的奇术能量正在聚集...</color>";
+                        HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "强烈的奇术能量正在聚集");
                     }
                 }
             });

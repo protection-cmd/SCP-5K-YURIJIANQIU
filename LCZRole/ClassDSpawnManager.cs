@@ -1,5 +1,4 @@
 ﻿using Exiled.API.Features;
-using Exiled.Events.EventArgs.Server;
 using MEC;
 using PlayerRoles;
 using System.Collections.Generic;

@@ -2,6 +2,7 @@
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using PlayerRoles;
+using SCP5K.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,13 +94,15 @@ namespace SCP5K
             if (isCorrect)
             {
                 response = "true";
-                player.ShowHint($"<color=green>✅ 密码正确！挑战成功！</color>", 10f);
+                var message = $"<color=green>✅ 密码正确！挑战成功！</color>\n输入: {normalizedInput}\n正确: {correctPassword}";
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 10f, "凯撒密码挑战t");
                 Log.Info($"玩家 {player.Nickname} 成功完成凯撒密码挑战，输入: '{normalizedInput}'，正确: '{correctPassword}'");
             }
             else
             {
                 response = "false";
-                player.ShowHint($"<color=red>❌ 密码错误！挑战失败！</color>\n输入: {normalizedInput}\n正确: {correctPassword}", 10f);
+                var message = $"<color=red>❌ 密码错误！挑战失败！</color>\n输入: {normalizedInput}\n正确: {correctPassword}";
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 10f, "凯撒密码挑战f");
                 Log.Info($"玩家 {player.Nickname} 凯撒密码挑战失败，输入: '{normalizedInput}'，正确: '{correctPassword}'");
             }
 
@@ -165,11 +168,12 @@ namespace SCP5K
                 };
 
                 // 显示加密后的密码提示
-                player.ShowHint($"<color=yellow>🔐 凯撒密码挑战 🔐</color>\n" +
+                var message = $"<color=yellow>🔐 凯撒密码挑战 🔐</color>\n" +
                                $"加密密码: <color=cyan>{encryptedPassword}</color>\n" +
                                $"提示: 使用凯撒密码解密（向前移动3位）\n" +
                                $"在控制台输入: .goc [密码]\n" +
-                               $"你只有一次机会！", 15f);
+                               $"你只有一次机会！";
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 30f, "凯撒密码挑战");
 
                 Log.Info($"玩家 {player.Nickname} 触发了凯撒密码事件");
                 Log.Info($"原始密码: {originalPassword}");

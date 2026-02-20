@@ -29,11 +29,20 @@ namespace SCP5K.SCPFouRole
         public const int SCP682_PITIFUL_ABILITY_KEYBIND_ID = 106;
         public const int CI_RAZNOV_COIN_ABILITY_KEYBIND_ID = 107;
 
-        // ★ 新增：GRU-CI 阵营技能ID
+        // GRU-CI 阵营技能ID
         public const int GRUCI_DEMO_SKILL_ID = 130;
         public const int GRUCI_CMDR_SKILL_ID = 131;
         public const int GRUCI_INV_SKILL1_ID = 132;
         public const int GRUCI_INV_SKILL2_ID = 133;
+
+        // Alpha-9 阵营技能ID
+        public const int A9_105_SKILL1_ID = 140;
+        public const int A9_105_SKILL2_ID = 141;
+        public const int A9_105_SKILL3_ID = 142;
+        public const int A9_105_SKILL4_ID = 143;
+        public const int A9_076_SKILL1_ID = 144;
+        public const int A9_076_SKILL2_ID = 145;
+        public const int A9_076_SKILL3_ID = 146;
 
         [System.Obsolete]
         public static void Register()
@@ -72,7 +81,16 @@ namespace SCP5K.SCPFouRole
                 new KeybindSetting(SCP682_PITIFUL_ABILITY_KEYBIND_ID, "可悲", KeyCode.H, hintDescription: "每秒回复10HP持续10秒"),
 
                 new HeaderSetting("混沌分裂者GRU小组","",false),
-                new KeybindSetting(CI_RAZNOV_COIN_ABILITY_KEYBIND_ID, "雷泽诺夫-小心脚下", KeyCode.G, hintDescription: "重新获得一个硬币")
+                new KeybindSetting(CI_RAZNOV_COIN_ABILITY_KEYBIND_ID, "雷泽诺夫-小心脚下", KeyCode.G, hintDescription: "重新获得一个硬币"),
+
+                new HeaderSetting("Alpha-9 最后的希望","",false),
+                new KeybindSetting(A9_105_SKILL1_ID, "105-技能一:SCP-105-B", KeyCode.Alpha1, hintDescription: "获得一个特殊SCP-1344记录坐标(CD60s)"),
+                new KeybindSetting(A9_105_SKILL2_ID, "105-技能二:镜面攻击", KeyCode.Alpha2, hintDescription: "记录点召唤BOT追踪攻击(CD90s)"),
+                new KeybindSetting(A9_105_SKILL3_ID, "105-技能三:出手再出手", KeyCode.Alpha3, hintDescription: "在记录点放炸弹并自爆(单次)"),
+                new KeybindSetting(A9_105_SKILL4_ID, "105-技能四:神谕的黎明", KeyCode.Alpha4, hintDescription: "召唤物与076与自身100%增伤(CD120s)"),
+                new KeybindSetting(A9_076_SKILL1_ID, "076-技能一:忘却往昔", KeyCode.G, hintDescription: "加移速及伤害，扣30生命上限(CD35s)"),
+                new KeybindSetting(A9_076_SKILL2_ID, "076-技能二:徒有残躯", KeyCode.H, hintDescription: "获得90%减伤，扣20生命上限(CD60s)"),
+                new KeybindSetting(A9_076_SKILL3_ID, "076-技能三:远方的玫瑰", KeyCode.J, hintDescription: "给予105额外30%移速(单次)")
             };
 
             SettingBase.Register(_settings);
@@ -98,7 +116,6 @@ namespace SCP5K.SCPFouRole
                 case NU7B_TIEXUE_SKILL1_ID: if (Nu7BTieXue.Instance.Check(player)) Nu7HammerDown.ExecuteNu7BTieXueSkill1(player); break;
                 case NU7B_TIEXUE_SKILL2_ID: if (Nu7BTieXue.Instance.Check(player)) Nu7HammerDown.ExecuteNu7BTieXueSkill2(player); break;
 
-                // ★ 触发 GRU-CI 技能
                 case GRUCI_DEMO_SKILL_ID: if (GRUCIDemolitionist.Instance.Check(player)) GRUCIManager.ExecuteDemoSkill(player); break;
                 case GRUCI_CMDR_SKILL_ID: if (GRUCICommander.Instance.Check(player)) GRUCIManager.ExecuteCmdrSkill(player); break;
                 case GRUCI_INV_SKILL1_ID: if (GRUCIInvestigator.Instance.Check(player)) GRUCIManager.ExecuteInvSkill1(player); break;
@@ -111,6 +128,15 @@ namespace SCP5K.SCPFouRole
                 case SCP682_ABHORRENCE_ABILITY_KEYBIND_ID: if (SCP682.IsSCP682(player)) SCP682.ExecuteAbhorrenceAbilityFromKeybind(player); break;
                 case SCP682_PITIFUL_ABILITY_KEYBIND_ID: if (SCP682.IsSCP682(player)) SCP682.ExecutePitifulAbilityFromKeybind(player); break;
                 case CI_RAZNOV_COIN_ABILITY_KEYBIND_ID: if (CIGRU.IsRaznov(player)) CIGRU.ExecuteRaznovCoinAbilityFromKeybind(player); break;
+
+                
+                case A9_105_SKILL1_ID: if (Alpha9Manager.Role105.Check(player)) Alpha9Manager.Execute105Skill1(player); break;
+                case A9_105_SKILL2_ID: if (Alpha9Manager.Role105.Check(player)) Alpha9Manager.Execute105Skill2(player); break;
+                case A9_105_SKILL3_ID: if (Alpha9Manager.Role105.Check(player)) Alpha9Manager.Execute105Skill3(player); break;
+                case A9_105_SKILL4_ID: if (Alpha9Manager.Role105.Check(player)) Alpha9Manager.Execute105Skill4(player); break;
+                case A9_076_SKILL1_ID: if (Alpha9Manager.Role076.Check(player)) Alpha9Manager.Execute076Skill1(player); break;
+                case A9_076_SKILL2_ID: if (Alpha9Manager.Role076.Check(player)) Alpha9Manager.Execute076Skill2(player); break;
+                case A9_076_SKILL3_ID: if (Alpha9Manager.Role076.Check(player)) Alpha9Manager.Execute076Skill3(player); break;
             }
         }
     }

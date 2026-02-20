@@ -1,11 +1,10 @@
-﻿using Exiled.API.Features;
-using Exiled.API.Enums;
+﻿using Exiled.API.Enums;
+using Exiled.API.Features;
 using Exiled.CustomRoles.API.Features;
 using MEC;
 using PlayerRoles;
-using System;
+using SCP5K.Events;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SCP5K.LCZRole
 {
@@ -23,7 +22,7 @@ namespace SCP5K.LCZRole
         protected override void RoleAdded(Player player)
         {
             base.RoleAdded(player);
-
+            FactionManager.AddPlayer(player, FactionType.ClassD);
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
@@ -33,7 +32,8 @@ namespace SCP5K.LCZRole
                 player.EnableEffect(EffectType.MovementBoost);
                 player.ChangeEffectIntensity(EffectType.MovementBoost, 10);
                 DDRunning.InitializeAthlete(player);
-                player.ShowHint($"<color=orange>你被选为运动员！\n移动速度提升至1.5倍\n按下爆发极限按键可临时提升速度</color>", 10f);
+                var message = $"<color=orange>你被选为运动员！\n移动速度提升至1.5倍\n按下爆发极限按键可临时提升速度</color>";
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "运动员");
             });
         }
 
@@ -81,12 +81,18 @@ namespace SCP5K.LCZRole
         {
             if (!IsAthlete(player) || !athleteStates.TryGetValue(player, out var state)) return;
 
-            if (state.IsAbilityCooldown) { player.ShowHint("<color=red>爆发极限技能正在冷却中！</color>", 3f); return; }
+            if (state.IsAbilityCooldown) 
+            { 
+                var message1 = $"<color=red>爆发极限技能冷却中！</color>";
+                HSMShowhint.HsmShowHint(player, message1, 600, 0, 5f, "技能冷却");
+                return; 
+            }
             if (state.IsAbilityActive) return;
 
             state.IsAbilityActive = true;
             player.ChangeEffectIntensity(EffectType.MovementBoost, (byte)BoostedSpeedIntensity);
-            player.ShowHint($"<color=yellow>爆发极限激活！持续40秒</color>", 5f);
+            var message = $"<color=yellow>爆发极限激活！持续40秒</color>";
+            HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "爆发极限激活");
 
             state.DurationCoroutine = Timing.CallDelayed(40f, () =>
             {
@@ -94,7 +100,8 @@ namespace SCP5K.LCZRole
                 {
                     player.ChangeEffectIntensity(EffectType.MovementBoost, 10);
                     state.IsAbilityActive = false;
-                    player.ShowHint("<color=orange>爆发极限效果结束</color>", 3f);
+                    var message2 = $"<color=orange>爆发极限效果结束</color>";
+                    HSMShowhint.HsmShowHint(player, message2, 600, 0, 5f, "技能冷却");
                 }
             });
 
@@ -104,7 +111,8 @@ namespace SCP5K.LCZRole
                 if (IsAthlete(player))
                 {
                     state.IsAbilityCooldown = false;
-                    player.ShowHint("<color=green>爆发极限技能已冷却完成！</color>", 3f);
+                    var message3 = $"<color=green>爆发极限技能已冷却完成！</color>";
+                    HSMShowhint.HsmShowHint(player, message3, 600, 0, 5f, "技能冷却");
                 }
             });
         }

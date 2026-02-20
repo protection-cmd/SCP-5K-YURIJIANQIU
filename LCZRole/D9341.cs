@@ -2,13 +2,13 @@
 using Exiled.API.Features;
 using Exiled.CustomRoles.API.Features;
 using Exiled.Events.EventArgs.Player;
-using Exiled.Events.EventArgs.Server;
 using MEC;
 using PlayerRoles;
-using System;
+using SCP5K.Events;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static Subtitles.SubtitleCategory;
 
 namespace SCP5K.LCZRole
 {
@@ -27,7 +27,7 @@ namespace SCP5K.LCZRole
         {
             base.RoleAdded(player);
             D9341EventHandler.InitializePlayer(player);
-
+            FactionManager.AddPlayer(player, FactionType.ClassD);
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
@@ -37,8 +37,8 @@ namespace SCP5K.LCZRole
                 player.ClearInventory();
                 foreach (var item in Plugin.Instance.Config.D9341InitialItems)
                     player.AddItem(item);
-
-                player.ShowHint("\n\n\n你是D-9341\n丢弃手电筒/手提灯进行存档\n丢弃硬币后，丢弃对应标志物进行读档（30秒CD）\n去逃离吧,自由面前,死亡亦不足惜", 10f);
+                var message = "\n\n\n你是D-9341\n丢弃手电筒/手提灯进行存档\n丢弃硬币后，丢弃对应标志物进行读档（30秒CD）\n去逃离吧,自由面前,死亡亦不足惜";
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 10f, "D-9341");
             });
         }
 
@@ -124,7 +124,8 @@ namespace SCP5K.LCZRole
                 var items = ev.Player.Items.Select(i => i.Type).ToList();
                 state.SavePoints.Add(new D9341State.SaveData(ev.Player.Position, items));
                 state.CurrentSaveIndex = 0;
-                ev.Player.ShowHint(Plugin.Instance.Config.SaveHint, 5f);
+                var message = Plugin.Instance.Config.SaveHint;
+                HSMShowhint.HsmShowHint(ev.Player, message, 600, 0, 5f, "冷却");
                 return;
             }
 
@@ -135,34 +136,62 @@ namespace SCP5K.LCZRole
                 var items = ev.Player.Items.Select(i => i.Type).ToList();
                 state.SavePoints.Add(new D9341State.SaveData(ev.Player.Position, items));
                 state.CurrentSaveIndex = 1;
-                ev.Player.ShowHint(Plugin.Instance.Config.SaveHint, 5f);
+                var message = Plugin.Instance.Config.SaveHint;
+                HSMShowhint.HsmShowHint(ev.Player, message, 600, 0, 5f, "冷却");
                 return;
             }
 
             if (ev.Item.Type == ItemType.Coin)
             {
-                if (state.IsLoadOnCooldown) { ev.IsAllowed = false; ev.Player.ShowHint($"冷却中，剩{state.LoadCooldownRemaining:F1}秒", 2f); return; }
+                
+                if (state.IsLoadOnCooldown)
+                {
+                    var message1 = $"冷却中，剩{state.LoadCooldownRemaining:F1}秒";
+                    ev.IsAllowed = false; 
+                    HSMShowhint.HsmShowHint(ev.Player, message1, 600, 0, 5f, "冷却"); 
+                    return; 
+                }
                 ev.IsAllowed = false;
                 ev.Player.RemoveItem(ev.Item);
 
-                if (state.SavePoints.Count == 0) { ev.Player.ShowHint("无可用存档", 3f); ev.Player.AddItem(ItemType.Coin); return; }
+                
+                if (state.SavePoints.Count == 0) 
+                {
+                    var message2 = "无可用存档";
+                    HSMShowhint.HsmShowHint(ev.Player, message2, 600, 0, 5f, "无可用存档"); 
+                    ev.Player.AddItem(ItemType.Coin); return; 
+                }
 
                 ev.Player.ClearInventory();
-                if (state.SavePoints.Count > 0) ev.Player.AddItem(ItemType.Flashlight);
-                if (state.SavePoints.Count > 1) ev.Player.AddItem(ItemType.Lantern);
-                ev.Player.ShowHint("已发存档读档器", 2f);
+                if (state.SavePoints.Count > 0)
+                {
+                    ev.Player.AddItem(ItemType.Flashlight);
+                }
+                if (state.SavePoints.Count > 1)
+                {
+                    ev.Player.AddItem(ItemType.Lantern);
+                }
+                var message = "已发存档读档器";
+                HSMShowhint.HsmShowHint(ev.Player, message, 600, 0, 5f, "已发存档读档器");
                 return;
             }
 
             if ((ev.Item.Type == ItemType.Flashlight && state.SavePoints.Count > 0) || (ev.Item.Type == ItemType.Lantern && state.SavePoints.Count > 1))
             {
-                if (state.IsLoadOnCooldown) { ev.IsAllowed = false; ev.Player.ShowHint($"读档冷却中: {state.LoadCooldownRemaining:F1}秒", 3f); return; }
+                if (state.IsLoadOnCooldown) 
+                { 
+                    ev.IsAllowed = false; 
+                    var message = $"读档冷却中，剩{state.LoadCooldownRemaining:F1}秒";
+                    HSMShowhint.HsmShowHint(ev.Player, message, 600, 0, 5f, "读档冷却");
+                    return; 
+                }
                 ev.IsAllowed = false;
                 ev.Player.RemoveItem(ev.Item);
 
                 int loadIndex = ev.Item.Type == ItemType.Flashlight ? 0 : 1;
                 LoadSaveState(ev.Player, state, loadIndex, true);
-                ev.Player.ShowHint($"回到第{loadIndex + 1}存档", 5f);
+                var message1 = $"回到第{loadIndex + 1}存档";
+                HSMShowhint.HsmShowHint(ev.Player, message1, 600, 0, 5f, $"回到第{loadIndex + 1}存档");
                 return;
             }
         }
@@ -205,7 +234,8 @@ namespace SCP5K.LCZRole
                 }
                 LoadSaveState(ev.Player, state, state.CurrentSaveIndex, false);
                 state.ReviveCount++;
-                ev.Player.ShowHint($"死亡读档! (复活 {state.ReviveCount}/2 次)", 5f);
+                var message = $"死亡读档! (复活 {state.ReviveCount}/2 次)";
+                HSMShowhint.HsmShowHint(ev.Player, message, 600, 0, 5f, "死亡读档");
             });
         }
 
@@ -234,7 +264,8 @@ namespace SCP5K.LCZRole
                     ev.Player.AddItem(ItemType.Coin);
                     ev.Player.AddItem(ItemType.Flashlight);
 
-                    ev.Player.ShowHint("\n\n\n逃脱失败了,这真的是终点吗?\n下一次死亡,将是真正的解脱", 10f);
+                    var message = "\n\n\n逃脱失败了,这真的是终点吗?\n下一次死亡,将是真正的解脱";
+                    HSMShowhint.HsmShowHint(ev.Player, message, 600, 0, 5f, "逃脱");
                 }
             }
         }

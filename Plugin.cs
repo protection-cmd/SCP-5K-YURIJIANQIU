@@ -36,12 +36,8 @@ namespace SCP5K
         {
             Instance = this;
 
-            // 注册角色
             RegisterAllCustomRoles();
-
-            // 注册技能状态清空管家
             SkillCleanupManager.RegisterEvents();
-
             AmmoEvents.RegEvent();
             EnsureMVPConfigDirectoryExists();
 
@@ -68,6 +64,10 @@ namespace SCP5K
             Exiled.Events.Handlers.Server.WaitingForPlayers += this.musicPlayer.WaitingForPlayer;
             Exiled.Events.Handlers.Server.RoundEnded += (ev) => this.musicPlayer.RoundEnded();
 
+            // ★ 回合重置管家与阵营管家
+            Exiled.Events.Handlers.Server.WaitingForPlayers += Alpha9Manager.ResetA9;
+            FactionManager.RegisterEvents();
+
             if (Config.DisableVanillaRespawns)
             {
                 VanillaSpawnDisabler.DisableVanillaRespawns = Config.DisableVanillaRespawns;
@@ -75,13 +75,7 @@ namespace SCP5K
                 VanillaSpawnDisabler.RegisterEvents();
             }
 
-            // ★ 移除：DDpig 和 DDRunning 的直接事件注册
-            // 它们的逻辑已移交 ClassDSpawnManager 统一管理
-
-            // ★ 新增：D级人员统一刷新管理器
             ClassDSpawnManager.RegisterEvents();
-
-            // D9341 仍需注册事件以处理丢物品、存档等交互逻辑
             d9341Handler = new D9341EventHandler();
             d9341Handler.RegisterEvents();
 
@@ -115,7 +109,6 @@ namespace SCP5K
             SCP682.RegisterEvents();
             SCP610.RegisterEvents();
 
-            // 注册 GRU-CI 事件管理器
             GRUCIManager.RegisterEvents();
 
             if (Config.EnableCustomSpawnManager)
@@ -137,7 +130,6 @@ namespace SCP5K
         {
             try
             {
-                // Nu-7 A连 与 B连
                 Nu7ACommander.Instance.Register();
                 Nu7AJiFeng.Instance.Register();
                 Nu7APrivate.Instance.Register();
@@ -145,7 +137,6 @@ namespace SCP5K
                 Nu7BTieXue.Instance.Register();
                 Nu7BPrivate.Instance.Register();
 
-                // GOC 与 CIGRU
                 GOCCommander.Instance.Register();
                 GOCHeavy.Instance.Register();
                 GOCSergeant.Instance.Register();
@@ -157,7 +148,6 @@ namespace SCP5K
                 CIHeavyRole.Instance.Register();
                 CIRiflemanRole.Instance.Register();
 
-                // GRU-CI 特遣队所有职业注册
                 GRUCIHacker.Instance.Register();
                 GRUCIBreacher.Instance.Register();
                 GRUCIDemolitionist.Instance.Register();
@@ -166,7 +156,6 @@ namespace SCP5K
                 GRUCISoldier.Instance.Register();
                 GRUCIConscript.Instance.Register();
 
-                // SCP 与 特殊D级
                 SCP610MotherRole.Instance.Register();
                 SCP610SprayerRole.Instance.Register();
                 SCP610ChildRole.Instance.Register();
@@ -175,7 +164,12 @@ namespace SCP5K
                 LiangziRole.Instance.Register();
                 AthleteRole.Instance.Register();
 
-                Log.Info("所有 CustomRole 角色通过单例模式硬核注册完毕！");
+                Alpha9Manager.Role105.Register();
+                Alpha9Manager.Role076.Register();
+                Alpha9Manager.RoleAgent.Register();
+                Alpha9Manager.RoleSoldier.Register();
+
+                Log.Info("所有 CustomRole 角色注册完毕！");
             }
             catch (Exception ex)
             {
@@ -186,6 +180,16 @@ namespace SCP5K
         public override void OnDisabled()
         {
             CustomRole.UnregisterRoles();
+
+            Alpha9Manager.Role105.Unregister();
+            Alpha9Manager.Role076.Unregister();
+            Alpha9Manager.RoleAgent.Unregister();
+            Alpha9Manager.RoleSoldier.Unregister();
+            Exiled.Events.Handlers.Server.WaitingForPlayers -= Alpha9Manager.ResetA9;
+            Alpha9Manager.ResetA9();
+            
+            // ★ 注销阵营管家
+            FactionManager.UnregisterEvents();
 
             this.mvpConfigManager?.StopAutoReload();
             Exiled.Events.Handlers.Player.Verified -= this.mvpEvent.Verified;
@@ -231,10 +235,7 @@ namespace SCP5K
         }
 
         [Obsolete]
-        public override void OnReloaded()
-        {
-            base.OnReloaded();
-        }
+        public override void OnReloaded() { base.OnReloaded(); }
 
         private void EnsureMVPConfigDirectoryExists()
         {

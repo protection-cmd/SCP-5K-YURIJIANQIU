@@ -3,11 +3,15 @@ using Exiled.API.Features;
 using Exiled.CustomRoles.API.Features;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Events.EventArgs.Server;
+using Hints;
 using MEC;
 using PlayerRoles;
+using SCP5K.Events;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using UnityEngine;
+using static Subtitles.SubtitleCategory;
 
 namespace SCP5K.SCPFouRole
 {
@@ -25,7 +29,7 @@ namespace SCP5K.SCPFouRole
         protected override void RoleAdded(Player player)
         {
             base.RoleAdded(player);
-
+            FactionManager.AddPlayer(player, FactionType.SCP682);
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
@@ -38,7 +42,7 @@ namespace SCP5K.SCPFouRole
                                      "<color=yellow>按下绑定键触发</color>\n" +
                                      "<color=green>可悲: 使自身获得缓慢回复效果，每秒回复10HP，持续10秒，CD50秒</color>\n" +
                                      "<color=yellow>按下绑定键触发</color>";
-                player.ShowHint(hintMessage, 15f);
+                HSMShowhint.HsmShowHint(player, hintMessage, 600, 0, 5f, "SCP-682");
             });
             SCP682.Initialize682(player);
         }
@@ -94,14 +98,16 @@ namespace SCP5K.SCPFouRole
             if (abhorrenceCooldowns.ContainsKey(player) && (DateTime.Now - abhorrenceCooldowns[player]).TotalSeconds < 50)
             {
                 var remaining = 50 - (DateTime.Now - abhorrenceCooldowns[player]).TotalSeconds;
-                player.ShowHint($"<color=red>能力冷却中！剩余 {remaining:F1} 秒</color>", 3f);
+                var message = $"<color=red>能力冷却中！剩余 {remaining:F1} 秒</color>";
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "冷却");
                 return;
             }
 
             abhorrenceActive[player] = true;
             abhorrenceActivatedTime[player] = DateTime.Now;
             abhorrenceCooldowns[player] = DateTime.Now;
-            player.ShowHint($"<color=red>憎恶已激活！</color>\n普通攻击将附带心脏骤停效果，持续20秒", 5f);
+            var message2 = $"<color=red>憎恶已激活！</color>\n普通攻击将附带心脏骤停效果，持续20秒";
+            HSMShowhint.HsmShowHint(player, message2, 600, 0, 5f, "心脏骤停效果");
 
             Timing.CallDelayed(20f, () =>
             {
@@ -109,7 +115,8 @@ namespace SCP5K.SCPFouRole
                 {
                     abhorrenceActive[player] = false;
                     player.DisableEffect(EffectType.CardiacArrest);
-                    player.ShowHint($"<color=yellow>憎恶效果已结束</color>", 3f);
+                    var message3 = $"<color=yellow>憎恶效果已结束</color>";
+                    HSMShowhint.HsmShowHint(player, message3, 600, 0, 5f, "心脏骤停效果");
                 }
             });
         }
@@ -120,7 +127,8 @@ namespace SCP5K.SCPFouRole
             if (pitifulCooldowns.ContainsKey(player) && (DateTime.Now - pitifulCooldowns[player]).TotalSeconds < 50)
             {
                 var remaining = 50 - (DateTime.Now - pitifulCooldowns[player]).TotalSeconds;
-                player.ShowHint($"<color=red>能力冷却中！剩余 {remaining:F1} 秒</color>", 3f);
+                var message = $"<color=red>能力冷却中！剩余 {remaining:F1} 秒</color>";
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "冷却");
                 return;
             }
 
@@ -128,7 +136,8 @@ namespace SCP5K.SCPFouRole
                 Timing.KillCoroutines(regenerationCoroutines[player]);
 
             pitifulCooldowns[player] = DateTime.Now;
-            player.ShowHint($"<color=green>可悲已激活！</color>\n每秒回复10HP，持续10秒", 5f);
+            var message1 = $"<color=green>可悲已激活！</color>\n每秒回复10HP，持续10秒";
+            HSMShowhint.HsmShowHint(player, message1, 600, 0, 5f, "可悲");
             regenerationCoroutines[player] = Timing.RunCoroutine(RegenerateHealth(player, 10f, 10));
         }
 
@@ -140,9 +149,14 @@ namespace SCP5K.SCPFouRole
                 if (player == null || !player.IsAlive || !IsSCP682(player)) yield break;
 
                 player.Health = Mathf.Min(player.Health + amount, player.MaxHealth);
-                player.ShowHint($"<color=green>生命恢复中...</color> +{amount}HP", 1f);
+                var message = $"<color=green>生命恢复中...</color> +{amount}HP";
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "生命恢复");
             }
-            if (player != null && IsSCP682(player)) player.ShowHint($"<color=yellow>生命恢复效果已结束</color>", 3f);
+            if (player != null && IsSCP682(player))
+            {
+                var message1  = $"<color=yellow>生命恢复已完成</color>";
+                HSMShowhint.HsmShowHint(player, message1, 600, 0, 5f, "生命恢复right");
+            }
         }
 
         private static void OnHurting(HurtingEventArgs ev)
@@ -152,7 +166,10 @@ namespace SCP5K.SCPFouRole
                 if ((DateTime.Now - abhorrenceActivatedTime[ev.Attacker]).TotalSeconds <= 20)
                 {
                     ev.Player.EnableEffect(EffectType.CardiacArrest, 255, 3f);
-                    ev.Attacker.ShowHint($"<color=red>憎恶攻击！</color> 目标获得心脏骤停效果", 1f);
+                    var message = $"<color=red>你被SCP-682攻击了！</color>\n附带心脏骤停效果，持续3秒";
+                    HSMShowhint.HsmShowHint(ev.Player, message, 600, 0, 5f, "心脏骤停效果");
+                    var message2 = $"<color=red>你触发了憎恶攻击！</color>\n目标获得心脏骤停效果，持续3秒";
+                    HSMShowhint.HsmShowHint(ev.Attacker, message2, 600, 0, 5f, "心脏骤停效果");
                 }
                 else
                 {

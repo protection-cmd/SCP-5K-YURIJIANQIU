@@ -6,7 +6,6 @@ using MEC;
 using PlayerRoles;
 using HintServiceMeow.Core.Utilities;
 using HintServiceMeow.Core.Enum;
-using HintServiceMeow.Core.Models.Hints;
 using System.Linq;
 using System;
 using Hint = HintServiceMeow.Core.Models.Hints.Hint;

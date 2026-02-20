@@ -1,12 +1,8 @@
 ﻿using System;
 using System.IO;
 using Exiled.API.Features;
-using Exiled.API.Enums;
 using MEC;
-using System.Collections.Generic;
 using AudioApi.Dummies;
-using UnityEngine;
-
 namespace SCP5K
 {
     public static class OmegaWarhead

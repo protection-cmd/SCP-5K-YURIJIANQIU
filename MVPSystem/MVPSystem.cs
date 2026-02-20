@@ -2,13 +2,10 @@
 using Exiled.API.Features;
 using Exiled.Events.EventArgs.Server;
 using HintServiceMeow.Core.Enum;
-using HintServiceMeow.Core.Models.Hints;
 using HintServiceMeow.Core.Utilities;
 using MEC;
 using System;
 using System.Linq;
-
-// ★ 引用 YuRiLS 的命名空间 (确保已添加 YuRiLS.dll 引用)
 using YuRiLS.PlayerDataSystem;
 
 namespace SCP5K.MVPSystem

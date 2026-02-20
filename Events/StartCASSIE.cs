@@ -1,7 +1,6 @@
 ﻿using Exiled.API.Features;
 using MEC;
 using LightContainmentZoneDecontamination;
-using LabApi.Events.Arguments.ServerEvents;
 
 namespace SCP5K.Events
 {

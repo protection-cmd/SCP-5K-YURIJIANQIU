@@ -7,6 +7,8 @@ using Exiled.Events.EventArgs.Player;
 using Exiled.Events.EventArgs.Server;
 using MEC;
 using PlayerRoles;
+using Respawning.Waves;
+using SCP5K.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +36,7 @@ namespace SCP5K.SCPFouRole
         protected override void RoleAdded(Player player)
         {
             base.RoleAdded(player);
-
+            FactionManager.AddPlayer(player, FactionType.CIGRU);
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
@@ -45,7 +47,9 @@ namespace SCP5K.SCPFouRole
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
 
-                player.ShowHint("你成为了混沌分裂者GRU小组的指挥官\n执行反基金会任务，夺取SCP物品！", 10f);
+                var message = "<color=yellow>你成为了混沌分裂者GRU小组的指挥官\n执行反基金会任务，守护人类！</color>";
+
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 15f, "CI-GRU-指挥官入场");
             });
         }
     }
@@ -70,7 +74,7 @@ namespace SCP5K.SCPFouRole
         protected override void RoleAdded(Player player)
         {
             base.RoleAdded(player);
-
+            FactionManager.AddPlayer(player, FactionType.CIGRU);
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
@@ -81,7 +85,9 @@ namespace SCP5K.SCPFouRole
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
 
-                player.ShowHint("你成为了混沌分裂者GRU小组的雷泽诺夫\n<color=yellow>特殊能力：</color>\n• 丢弃硬币可部署地雷\n• 按G键重新获得硬币（60秒冷却）\n• 前往广播室使用对讲机可呼叫支援", 15f);
+                var message = "<color=yellow>你成为了混沌分裂者GRU小组的雷泽诺夫\n<color=yellow>特殊能力：</color>\n• 丢弃硬币可部署地雷\n• 按G键重新获得硬币（60秒冷却）\n• 前往广播室使用对讲机可呼叫支援</color>";
+
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 15f, "CI-GRU-雷泽诺夫入场");
             });
             CIGRU.InitializeRaznov(player);
         }
@@ -113,7 +119,7 @@ namespace SCP5K.SCPFouRole
         protected override void RoleAdded(Player player)
         {
             base.RoleAdded(player);
-
+            FactionManager.AddPlayer(player, FactionType.CIGRU);
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
@@ -124,7 +130,9 @@ namespace SCP5K.SCPFouRole
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
 
-                player.ShowHint("你成为了混沌分裂者GRU小组的重装\n执行反基金会任务，夺取SCP物品！", 10f);
+                var message = "<color=yellow>你成为了混沌分裂者GRU小组的重装\n执行反基金会任务，守护人类！</color>";
+
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 15f, "CI-GRU-重装入场");
             });
         }
     }
@@ -149,7 +157,7 @@ namespace SCP5K.SCPFouRole
         protected override void RoleAdded(Player player)
         {
             base.RoleAdded(player);
-
+            FactionManager.AddPlayer(player, FactionType.CIGRU);
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
@@ -160,7 +168,8 @@ namespace SCP5K.SCPFouRole
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
 
-                player.ShowHint("你成为了混沌分裂者GRU小组的步枪手\n执行反基金会任务，夺取SCP物品！", 10f);
+                var message = "<color=yellow>你成为了混沌分裂者GRU小组的步枪手\n执行反基金会任务，守护人类！</color>";
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 15f, "CI-GRU-步枪手入场");
             });
         }
     }
@@ -215,21 +224,27 @@ namespace SCP5K.SCPFouRole
             string[] roles = GetRolesByPlayerCount(players.Count);
             if (roles == null) return false;
 
-            for (int i = 0; i < roles.Length; i++)
-            {
-                var p = players[i];
-                if (roles[i] == "指挥官") CICommanderRole.Instance.AddRole(p);
-                else if (roles[i] == "雷泽诺夫") CIRaznovRole.Instance.AddRole(p);
-                else if (roles[i] == "重装") CIHeavyRole.Instance.AddRole(p);
-                else if (roles[i] == "步枪手") CIRiflemanRole.Instance.AddRole(p);
-            }
+            var chaoWave = new ChaosSpawnWave();
+            Respawn.PlayEffect(chaoWave);
 
-            Timing.CallDelayed(2f, () =>
+            Timing.CallDelayed(13f,() =>
             {
-                Server.ExecuteCommand("/cassieadvanced custom False 1 <b><color=#228B22>-\r\n<split><b><color=#228B22>注意，注意<split><b><color=#228B22>检测到混沌分裂者活动<split><b><color=#228B22>所有非必要人员请立即撤离<split> $PITCH_0.5 $SLEEP_0.05 .G4 .G4 .G5 .G6 $SLEEP_0.5 .\r\n<split> $PITCH_1.0 $SLEEP_0.05 Attention . Attention $SLEEP_0.5 .\r\n<split> $PITCH_1.0 $SLEEP_0.05 Chaos Insurgency activity detected $SLEEP_0.5 .\r\n<split> $PITCH_1.0 $SLEEP_0.05 All non-essential personnel evacuate immediately $SLEEP_0.5 .");
-                Timing.CallDelayed(1f, () => SpawnMemeWeapon());
+                for (int i = 0; i < roles.Length; i++)
+                {
+                    var p = players[i];
+                    if (roles[i] == "指挥官") CICommanderRole.Instance.AddRole(p);
+                    else if (roles[i] == "雷泽诺夫") CIRaznovRole.Instance.AddRole(p);
+                    else if (roles[i] == "重装") CIHeavyRole.Instance.AddRole(p);
+                    else if (roles[i] == "步枪手") CIRiflemanRole.Instance.AddRole(p);
+                }
+
+                Timing.CallDelayed(2f, () =>
+                {
+
+                    Server.ExecuteCommand("/cassieadvanced custom False 1 <b><color=#228B22>-\r\n<split><b><color=#228B22>注意，注意<split><b><color=#228B22>检测到混沌分裂者活动<split><b><color=#228B22>所有非必要人员请立即撤离<split> $PITCH_0.5 $SLEEP_0.05 .G4 .G4 .G5 .G6 $SLEEP_0.5 .\r\n<split> $PITCH_1.0 $SLEEP_0.05 Attention . Attention $SLEEP_0.5 .\r\n<split> $PITCH_1.0 $SLEEP_0.05 Chaos Insurgency activity detected $SLEEP_0.5 .\r\n<split> $PITCH_1.0 $SLEEP_0.05 All non-essential personnel evacuate immediately $SLEEP_0.5 .");
+                    Timing.CallDelayed(1f, () => SpawnMemeWeapon());
+                });
             });
-
             return true;
         }
 

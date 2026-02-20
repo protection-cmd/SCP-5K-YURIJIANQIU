@@ -2,9 +2,7 @@
 using Exiled.CustomRoles.API.Features;
 using MEC;
 using PlayerRoles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using SCP5K.Events;
 
 namespace SCP5K.LCZRole
 {
@@ -22,13 +20,14 @@ namespace SCP5K.LCZRole
         protected override void RoleAdded(Player player)
         {
             base.RoleAdded(player);
-
+            FactionManager.AddPlayer(player, FactionType.ClassD);
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
-                player.ShowHint($"<color=orange>你被选为良子！\n血量提升至250</color>", 10f);
+                var message = $"<color=orange>你被选为良子！\n血量提升至{this.MaxHealth}</color>";
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "良子");
             });
         }
     }

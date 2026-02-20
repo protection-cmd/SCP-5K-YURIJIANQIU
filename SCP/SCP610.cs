@@ -5,6 +5,7 @@ using Exiled.Events.EventArgs.Player;
 using Exiled.Events.EventArgs.Server;
 using MEC;
 using PlayerRoles;
+using SCP5K.Events;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ namespace SCP5K.SCPFouRole
         protected override void RoleAdded(Player player)
         {
             base.RoleAdded(player);
-
+            FactionManager.AddPlayer(player, FactionType.SCP610);
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
@@ -33,7 +34,8 @@ namespace SCP5K.SCPFouRole
 
                 var spawn610 = Room.Get(RoomType.Hcz049);
                 player.Position = spawn610 != null ? spawn610.Position + Vector3.up : new Vector3(59.3f, 992.9f, -42.3f);
-                player.ShowHint("你已成为SCP-610母体\n\n生命值: 1000\n能力: 附近所有SCP-610成员获得增强\n你的存在会加速血肉的传播！", 10f);
+                var message = "你已成为SCP-610母体\n\n生命值: 1000\n能���: 附近所有SCP-610成员获得增强\n你的存在会加速血肉的传播！";
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "SCP-610母体");
             });
             SCP610.SetMother(player);
         }
@@ -61,7 +63,7 @@ namespace SCP5K.SCPFouRole
         protected override void RoleAdded(Player player)
         {
             base.RoleAdded(player);
-
+            FactionManager.AddPlayer(player, FactionType.SCP610);
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
@@ -73,7 +75,8 @@ namespace SCP5K.SCPFouRole
 
                 var spawn610 = Room.Get(RoomType.Hcz049);
                 player.Position = spawn610 != null ? spawn610.Position + Vector3.up : new Vector3(59.3f, 992.9f, -42.3f);
-                player.ShowHint("你已成为SCP-610喷射体\n\n生命值: 600\n武器: COM15手枪\n能力: 使用武器快速传播感染", 10f);
+                var message = "你已成为SCP-610喷射体\n\n生命值: 600\n武器: COM15手枪\n能力: 使用武器快速传播感染";
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "SCP-610喷射体");
             });
         }
     }
@@ -92,7 +95,7 @@ namespace SCP5K.SCPFouRole
         protected override void RoleAdded(Player player)
         {
             base.RoleAdded(player);
-
+            FactionManager.AddPlayer(player, FactionType.SCP610);
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
@@ -101,7 +104,8 @@ namespace SCP5K.SCPFouRole
 
                 player.EnableEffect(EffectType.Bleeding, 1, 3f);
                 player.EnableEffect(EffectType.Hemorrhage, 1, 3f);
-                player.ShowHint("你已被SCP-610感染！\n\n生命值: 400\n你现在是血肉瘟疫的一部分\n杀死更多人类来传播感染！", 10f);
+                var message = "你已成为SCP-610子个体\n\n生命值: 400\n你现在是血肉瘟疫的一部分\n杀死更多人类来传播感染！";
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "SCP-610子个体");
             });
         }
 
