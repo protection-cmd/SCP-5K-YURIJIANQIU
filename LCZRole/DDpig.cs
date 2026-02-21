@@ -27,7 +27,7 @@ namespace SCP5K.LCZRole
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
                 var message = $"<color=orange>你被选为良子！\n血量提升至{this.MaxHealth}</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "良子");
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 10f, "良子");
             });
         }
     }

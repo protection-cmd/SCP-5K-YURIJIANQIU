@@ -442,9 +442,8 @@ namespace SCP5K.SCPFouRole
             SpawnNu7Schematic();
             PlayNu7SpawnMusic(true); // ★ A连传入 True
             PlayCassie();
-            var ntfWave = new NtfSpawnWave();
-            Respawn.PlayEffect(ntfWave);
 
+            Respawn.SummonNtfChopper();
             Timing.CallDelayed(2.0f, () =>
             {
                 if (players.Count >= 1 && players[0] != null) Nu7ACommander.Instance.AddRole(players[0]);

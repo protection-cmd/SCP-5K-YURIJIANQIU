@@ -108,6 +108,7 @@ namespace SCP5K
             CIGRU.RegisterEvents();
             SCP682.RegisterEvents();
             SCP610.RegisterEvents();
+            Alpha9Manager.RegisterEvents();
 
             GRUCIManager.RegisterEvents();
 
@@ -219,6 +220,7 @@ namespace SCP5K
             SCP682.UnregisterEvents();
             SCP610.UnregisterEvents();
             GRUCIManager.UnregisterEvents();
+            Alpha9Manager.UnregisterEvents();
             CustomSpawnManager.UnregisterEvents();
             VanillaSpawnDisabler.UnregisterEvents();
             SSSSettings.Unregister();

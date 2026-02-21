@@ -22,7 +22,9 @@ namespace SCP5K.Events
                 YCoordinate = YCoordinate,
                 XCoordinate = XCoordinate,
                 Alignment = HintAlignment,
-                Id = Id
+                Id = Id,
+                FontSize = 50
+                
             };
 
             display.AddHint(hint);

@@ -33,7 +33,7 @@ namespace SCP5K.LCZRole
                 player.ChangeEffectIntensity(EffectType.MovementBoost, 10);
                 DDRunning.InitializeAthlete(player);
                 var message = $"<color=orange>你被选为运动员！\n移动速度提升至1.5倍\n按下爆发极限按键可临时提升速度</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "运动员");
+                HSMShowhint.HsmShowHint(player, message, 600, 0, 10f, "运动员");
             });
         }
 

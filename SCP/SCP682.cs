@@ -42,7 +42,7 @@ namespace SCP5K.SCPFouRole
                                      "<color=yellow>按下绑定键触发</color>\n" +
                                      "<color=green>可悲: 使自身获得缓慢回复效果，每秒回复10HP，持续10秒，CD50秒</color>\n" +
                                      "<color=yellow>按下绑定键触发</color>";
-                HSMShowhint.HsmShowHint(player, hintMessage, 600, 0, 5f, "SCP-682");
+                HSMShowhint.HsmShowHint(player, hintMessage, 600, 0, 10f, "SCP-682");
             });
             SCP682.Initialize682(player);
         }
