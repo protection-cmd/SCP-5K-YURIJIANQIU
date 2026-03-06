@@ -33,7 +33,7 @@ namespace SCP5K.LCZRole
                 player.ChangeEffectIntensity(EffectType.MovementBoost, 10);
                 DDRunning.InitializeAthlete(player);
                 var message = $"<color=orange>你被选为运动员！\n移动速度提升至1.5倍\n按下爆发极限按键可临时提升速度</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 10f, "运动员");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 10f, "运动员");
             });
         }
 
@@ -84,7 +84,7 @@ namespace SCP5K.LCZRole
             if (state.IsAbilityCooldown) 
             { 
                 var message1 = $"<color=red>爆发极限技能冷却中！</color>";
-                HSMShowhint.HsmShowHint(player, message1, 600, 0, 5f, "技能冷却");
+                HSMShowhint.HsmShowHint(player, message1, 750, 0, 5f, "技能冷却");
                 return; 
             }
             if (state.IsAbilityActive) return;
@@ -92,7 +92,7 @@ namespace SCP5K.LCZRole
             state.IsAbilityActive = true;
             player.ChangeEffectIntensity(EffectType.MovementBoost, (byte)BoostedSpeedIntensity);
             var message = $"<color=yellow>爆发极限激活！持续40秒</color>";
-            HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "爆发极限激活");
+            HSMShowhint.HsmShowHint(player, message, 750, 0, 5f, "爆发极限激活");
 
             state.DurationCoroutine = Timing.CallDelayed(40f, () =>
             {
@@ -101,7 +101,7 @@ namespace SCP5K.LCZRole
                     player.ChangeEffectIntensity(EffectType.MovementBoost, 10);
                     state.IsAbilityActive = false;
                     var message2 = $"<color=orange>爆发极限效果结束</color>";
-                    HSMShowhint.HsmShowHint(player, message2, 600, 0, 5f, "技能冷却");
+                    HSMShowhint.HsmShowHint(player, message2, 750, 0, 5f, "技能冷却");
                 }
             });
 
@@ -112,7 +112,7 @@ namespace SCP5K.LCZRole
                 {
                     state.IsAbilityCooldown = false;
                     var message3 = $"<color=green>爆发极限技能已冷却完成！</color>";
-                    HSMShowhint.HsmShowHint(player, message3, 600, 0, 5f, "技能冷却");
+                    HSMShowhint.HsmShowHint(player, message3, 750, 0, 5f, "技能冷却");
                 }
             });
         }

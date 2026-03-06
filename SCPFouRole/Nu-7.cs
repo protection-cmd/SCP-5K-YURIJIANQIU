@@ -91,7 +91,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "Nu-7 落锤-A连指挥官";
         public override int MaxHealth { get; set; } = 150;
         public override FactionType Faction => FactionType.Nu7A;
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -116,7 +116,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "Nu-7 落锤-A连-疾风";
         public override int MaxHealth { get; set; } = 120;
         public override FactionType Faction => FactionType.Nu7A;
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -141,7 +141,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "Nu-7 落锤-A连列兵";
         public override int MaxHealth { get; set; } = 100;
         public override FactionType Faction => FactionType.Nu7A;
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -167,7 +167,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "Nu-7 落锤-B连指挥官";
         public override int MaxHealth { get; set; } = 100;
         public override FactionType Faction => FactionType.Nu7B;
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -192,7 +192,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "Nu-7 落锤-B连铁血";
         public override int MaxHealth { get; set; } = 120;
         public override FactionType Faction => FactionType.Nu7B;
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -217,7 +217,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "Nu-7 落锤-B连列兵";
         public override int MaxHealth { get; set; } = 100;
         public override FactionType Faction => FactionType.Nu7B;
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -296,12 +296,12 @@ namespace SCP5K.SCPFouRole
             if (aCmdrSkill1CD.ContainsKey(player) && (DateTime.Now - aCmdrSkill1CD[player]).TotalSeconds < 60)
             {
                 var message = $"<color=red>先发制人冷却中: {60 - (DateTime.Now - aCmdrSkill1CD[player]).TotalSeconds:F1}秒</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "先发制人"); return;
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 5f, "先发制人"); return;
             }
             aCmdrSkill1CD[player] = DateTime.Now;
             Vector3 anchorPos = player.Position;
             var message2 = "<color=green>先发制人: 锚点已设置，20秒后将强制返回！</color>";
-            HSMShowhint.HsmShowHint(player, message2, 600, 0, 5f, "先发制人");
+            HSMShowhint.HsmShowHint(player, message2, 750, 0, 5f, "先发制人");
 
             Timing.CallDelayed(20f, () =>
             {
@@ -309,7 +309,7 @@ namespace SCP5K.SCPFouRole
                 {
                     player.Position = anchorPos;
                     var message3 = "<color=cyan>已强制返回锚点！</color>";
-                    HSMShowhint.HsmShowHint(player, message3, 600, 0, 3f, "返回锚点");
+                    HSMShowhint.HsmShowHint(player, message3, 750, 0, 3f, "返回锚点");
                 }
             });
         }
@@ -319,7 +319,7 @@ namespace SCP5K.SCPFouRole
             if (aCmdrSkill2CD.ContainsKey(player) && (DateTime.Now - aCmdrSkill2CD[player]).TotalSeconds < 60)
             {
                 var message = $"<color=red>全军出击冷却中: {60 - (DateTime.Now - aCmdrSkill2CD[player]).TotalSeconds:F1}秒</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 3f, "全军出击冷却");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 3f, "全军出击冷却");
                 return;
             }
             aCmdrSkill2CD[player] = DateTime.Now;
@@ -330,7 +330,7 @@ namespace SCP5K.SCPFouRole
                 count++;
             }
             var message2 = $"<color=green>全军出击已激活！影响了 {count} 名A连队员</color>";
-            HSMShowhint.HsmShowHint(player, message2, 600, 0, 3f, "全军出击冷却");
+            HSMShowhint.HsmShowHint(player, message2, 750, 0, 3f, "全军出击冷却");
         }
 
         public static void ExecuteNu7AJiFengSkill(Player player)
@@ -338,13 +338,13 @@ namespace SCP5K.SCPFouRole
             if (aJiFengSkillCD.ContainsKey(player) && (DateTime.Now - aJiFengSkillCD[player]).TotalSeconds < 40)
             {
                 var message = $"<color=red>无畏无惧冷却中: {40 - (DateTime.Now - aJiFengSkillCD[player]).TotalSeconds:F1}秒</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 3f, "无畏无惧冷却"); return;
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 3f, "无畏无惧冷却"); return;
             }
             aJiFengSkillCD[player] = DateTime.Now;
             player.EnableEffect(EffectType.DamageReduction, 100, 10f);
             player.EnableEffect(EffectType.MovementBoost, 20, 10f);
             var message2 = "<color=green>无畏，无惧！50%减伤与加速激活 (持续10秒)</color>";
-            HSMShowhint.HsmShowHint(player, message2, 600, 0, 3f, "无畏无惧");
+            HSMShowhint.HsmShowHint(player, message2, 750, 0, 3f, "无畏无惧");
         }
         #endregion
 
@@ -354,12 +354,12 @@ namespace SCP5K.SCPFouRole
             if (bCmdrSacrificeUsed.Contains(player))
             {
                 var message = "<color=red>献祭过往，永垂不朽 只能使用一次！</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 3f, "献祭过往"); return;
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 3f, "献祭过往"); return;
             }
             bCmdrSacrificeUsed.Add(player);
             Vector3 anchor = player.Position;
             var message2 = "<color=red>献祭过往，永垂不朽：已记录坐标，3秒后大清算！</color>";
-            HSMShowhint.HsmShowHint(player, message2, 600, 0, 3f, "永垂不朽");
+            HSMShowhint.HsmShowHint(player, message2, 750, 0, 3f, "永垂不朽");
 
             Timing.CallDelayed(3f, () =>
             {
@@ -380,7 +380,7 @@ namespace SCP5K.SCPFouRole
             if (bCmdrSkill2CD.ContainsKey(player) && (DateTime.Now - bCmdrSkill2CD[player]).TotalSeconds < 60)
             {
                 var message = $"<color=red>画地为牢冷却中: {60 - (DateTime.Now - bCmdrSkill2CD[player]).TotalSeconds:F1}秒</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 3f, "画地为牢冷却"); return;
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 3f, "画地为牢冷却"); return;
             }
             bCmdrSkill2CD[player] = DateTime.Now;
             Vector3 anchor = player.Position;
@@ -397,7 +397,7 @@ namespace SCP5K.SCPFouRole
                 }
             }
             var message2 = $"<color=green>画地为牢已触发！成功禁锢了 {count} 个敌方目标</color>";
-            HSMShowhint.HsmShowHint(player, message2, 600, 0, 3f, "画地为牢");
+            HSMShowhint.HsmShowHint(player, message2, 750, 0, 3f, "画地为牢");
         }
 
         public static void ExecuteNu7BTieXueSkill1(Player player)
@@ -405,18 +405,18 @@ namespace SCP5K.SCPFouRole
             if (bTieXueSkill1CD.ContainsKey(player) && (DateTime.Now - bTieXueSkill1CD[player]).TotalSeconds < 120)
             {
                 var message = $"<color=red>再著诗篇冷却中: {120 - (DateTime.Now - bTieXueSkill1CD[player]).TotalSeconds:F1}秒</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 3f, "再著诗篇冷却"); return;
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 3f, "再著诗篇冷却"); return;
             }
             if (player.IsInventoryFull)
             {
                 var message = "<color=yellow>背包已满，未能获得囚鸟，保留CD！</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 3f, "背包已满");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 3f, "背包已满");
                 return;
             }
             player.AddItem(ItemType.Jailbird);
             bTieXueSkill1CD[player] = DateTime.Now;
             var message2 = "<color=green>再著诗篇：已获得囚鸟！</color>";
-            HSMShowhint.HsmShowHint(player, message2, 600, 0, 3f, "再著诗篇");
+            HSMShowhint.HsmShowHint(player, message2, 750, 0, 3f, "再著诗篇");
         }
 
         public static void ExecuteNu7BTieXueSkill2(Player player)
@@ -424,13 +424,13 @@ namespace SCP5K.SCPFouRole
             if (bTieXueSkill2CD.ContainsKey(player) && (DateTime.Now - bTieXueSkill2CD[player]).TotalSeconds < 60)
             {
                 var message = $"<color=red>冲冲冲冷却中: {60 - (DateTime.Now - bTieXueSkill2CD[player]).TotalSeconds:F1}秒</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 3f, "冲冲冲冷却"); return;
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 3f, "冲冲冲冷却"); return;
             }
             bTieXueSkill2CD[player] = DateTime.Now;
             player.EnableEffect(EffectType.MovementBoost, 20, 5f);
             bTieXueDamageBoostEnd[player] = DateTime.Now.AddSeconds(5);
             var message2 = "<color=green>冲，冲，冲！5秒内伤害翻倍并加速！</color>";
-            HSMShowhint.HsmShowHint(player, message2, 600, 0, 3f, "冲冲冲冷却");
+            HSMShowhint.HsmShowHint(player, message2, 750, 0, 3f, "冲冲冲冷却");
         }
         #endregion
 

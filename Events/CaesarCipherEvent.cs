@@ -95,14 +95,14 @@ namespace SCP5K
             {
                 response = "true";
                 var message = $"<color=green>✅ 密码正确！挑战成功！</color>\n输入: {normalizedInput}\n正确: {correctPassword}";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 10f, "凯撒密码挑战t");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 10f, "凯撒密码挑战t");
                 Log.Info($"玩家 {player.Nickname} 成功完成凯撒密码挑战，输入: '{normalizedInput}'，正确: '{correctPassword}'");
             }
             else
             {
                 response = "false";
                 var message = $"<color=red>❌ 密码错误！挑战失败！</color>\n输入: {normalizedInput}\n正确: {correctPassword}";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 10f, "凯撒密码挑战f");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 10f, "凯撒密码挑战f");
                 Log.Info($"玩家 {player.Nickname} 凯撒密码挑战失败，输入: '{normalizedInput}'，正确: '{correctPassword}'");
             }
 
@@ -173,7 +173,7 @@ namespace SCP5K
                                $"提示: 使用凯撒密码解密（向前移动3位）\n" +
                                $"在控制台输入: .goc [密码]\n" +
                                $"你只有一次机会！";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 30f, "凯撒密码挑战");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 30f, "凯撒密码挑战");
 
                 Log.Info($"玩家 {player.Nickname} 触发了凯撒密码事件");
                 Log.Info($"原始密码: {originalPassword}");

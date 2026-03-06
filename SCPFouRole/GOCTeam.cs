@@ -26,7 +26,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "GOC打击小组-指挥官";
         public override int MaxHealth { get; set; } = 150;
         public override FactionType Faction => FactionType.GOCTeam;
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -63,7 +63,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "GOC打击小组-重装";
         public override int MaxHealth { get; set; } = 200;
         public override FactionType Faction => FactionType.GOCTeam;
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -99,7 +99,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "GOC打击小组-中士";
         public override int MaxHealth { get; set; } = 100;
         public override FactionType Faction => FactionType.GOCTeam;
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -135,7 +135,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "GOC打击小组-列兵";
         public override int MaxHealth { get; set; } = 120;
         public override FactionType Faction => FactionType.GOCTeam;
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -195,12 +195,12 @@ namespace SCP5K.SCPFouRole
             {
                 var remaining = 60 - (DateTime.Now - commanderCooldowns[commander]).TotalSeconds;
                 var message = $"<color=red>能力冷却中！剩余 {remaining:F1} 秒</color>";
-                HSMShowhint.HsmShowHint(commander, message, 600, 0, 5f, "能力冷却");
+                HSMShowhint.HsmShowHint(commander, message, 750, 0, 5f, "能力冷却");
                 return;
             }
-            commander.EnableEffect(EffectType.Fade, 200, 10f);
+            commander.EnableEffect(EffectType.Fade, 255, 10f);
             var message2 = $"<color=green>静谧行动已激活！</color>";
-            HSMShowhint.HsmShowHint(commander, message2, 600, 0, 5f, "静谧行动");
+            HSMShowhint.HsmShowHint(commander, message2, 750, 0, 5f, "静谧行动");
             commanderCooldowns[commander] = DateTime.Now;
         }
 
@@ -210,28 +210,28 @@ namespace SCP5K.SCPFouRole
             {
                 var remaining = 30 - (DateTime.Now - heavyCooldowns[heavy]).TotalSeconds;
                 var message = $"<color=red>能力冷却中！剩余 {remaining:F1} 秒</color>";
-                HSMShowhint.HsmShowHint(heavy, message, 600, 0, 5f, "能力冷却");
+                HSMShowhint.HsmShowHint(heavy, message, 750, 0, 5f, "能力冷却");
                 return;
             }
-            heavy.EnableEffect(EffectType.DamageReduction, 100, 5f);
+            heavy.EnableEffect(EffectType.DamageReduction, 160, 5f);
             var message2 = $"<color=green>凝神静气已激活！</color>";
-            HSMShowhint.HsmShowHint(heavy, message2, 600, 0, 5f, "凝神静气");
+            HSMShowhint.HsmShowHint(heavy, message2, 750, 0, 5f, "凝神静气");
             heavyCooldowns[heavy] = DateTime.Now;
         }
 
         public static void ExecuteSergeantAbilityFromKeybind(Player sgt)
         {
-            if (sergeantBurnUsed.Contains(sgt)) 
-            { 
+            if (sergeantBurnUsed.Contains(sgt))
+            {
                 var message = $"<color=red>能力已使用过！</color>";
-                HSMShowhint.HsmShowHint(sgt, message, 600, 0, 5f, "已使用过");
-                return; 
+                HSMShowhint.HsmShowHint(sgt, message, 750, 0, 5f, "已使用过");
+                return;
             }
             sgt.EnableEffect(EffectType.AntiScp207);
             sgt.MaxHealth = 75;
             if (sgt.Health > 75f) sgt.Health = 75f;
             var message2 = $"<color=green>生命付之一炬已激活！</color>";
-            HSMShowhint.HsmShowHint(sgt, message2, 600, 0, 5f, "生命付之一炬");
+            HSMShowhint.HsmShowHint(sgt, message2, 750, 0, 5f, "生命付之一炬");
             sergeantBurnUsed.Add(sgt);
         }
 

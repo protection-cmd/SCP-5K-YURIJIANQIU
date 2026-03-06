@@ -27,10 +27,10 @@ namespace SCP5K.SCPFouRole
 
         public override string Description { get; set; }
 
-        public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
+        public override List<string> Inventory { get; set; } = new List<string>
         {
-            ItemType.GunAK, ItemType.KeycardChaosInsurgency, ItemType.Medkit,
-            ItemType.ArmorCombat, ItemType.Adrenaline, ItemType.Radio, ItemType.GrenadeHE
+            ItemType.GunAK.ToString(), ItemType.KeycardChaosInsurgency.ToString(), ItemType.Medkit.ToString(),
+            ItemType.ArmorCombat.ToString(), ItemType.Adrenaline.ToString(), ItemType.Radio.ToString(), ItemType.GrenadeHE.ToString()
         };
 
         protected override void RoleAdded(Player player)
@@ -41,15 +41,12 @@ namespace SCP5K.SCPFouRole
             {
                 if (player == null || !player.IsConnected) return;
                 player.EnableEffect(EffectType.NightVision);
-
-                player.ClearInventory();
-                foreach (var item in CustomRoleItems) player.AddItem(item);
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
 
                 var message = "<color=yellow>你成为了混沌分裂者GRU小组的指挥官\n执行反基金会任务，守护人类！</color>";
 
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 15f, "CI-GRU-指挥官入场");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 15f, "CI-GRU-指挥官入场");
             });
         }
     }
@@ -63,12 +60,12 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "CI-GRU-雷泽诺夫";
         public override int MaxHealth { get; set; } = 100;
 
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
-        public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
-        {
-            ItemType.GunFRMG0, ItemType.KeycardChaosInsurgency, ItemType.Medkit,
-            ItemType.ArmorCombat, ItemType.Adrenaline, ItemType.Radio, ItemType.Coin
+        public override List<string> Inventory { get; set; } = new List<string>
+        {   
+            ItemType.GunFRMG0.ToString(), ItemType.KeycardChaosInsurgency.ToString(), ItemType.Medkit.ToString(),
+            ItemType.ArmorCombat.ToString(), ItemType.Adrenaline.ToString(), ItemType.Radio.ToString(), ItemType.Coin.ToString()
         };
 
         protected override void RoleAdded(Player player)
@@ -79,15 +76,12 @@ namespace SCP5K.SCPFouRole
             {
                 if (player == null || !player.IsConnected) return;
                 player.EnableEffect(EffectType.NightVision);
-
-                player.ClearInventory();
-                foreach (var item in CustomRoleItems) player.AddItem(item);
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
 
                 var message = "<color=yellow>你成为了混沌分裂者GRU小组的雷泽诺夫\n<color=yellow>特殊能力：</color>\n• 丢弃硬币可部署地雷\n• 按G键重新获得硬币（60秒冷却）\n• 前往广播室使用对讲机可呼叫支援</color>";
 
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 15f, "CI-GRU-雷泽诺夫入场");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 15f, "CI-GRU-雷泽诺夫入场");
             });
             CIGRU.InitializeRaznov(player);
         }
@@ -108,12 +102,12 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "CI-GRU-重装";
         public override int MaxHealth { get; set; } = 150;
 
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
-        public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
+        public override List<string> Inventory { get; set; } = new List<string>
         {
-            ItemType.GunLogicer, ItemType.KeycardChaosInsurgency, ItemType.Medkit,
-            ItemType.ArmorHeavy, ItemType.Adrenaline, ItemType.Radio, ItemType.GrenadeHE
+            ItemType.GunLogicer.ToString(), ItemType.KeycardChaosInsurgency.ToString(), ItemType.Medkit.ToString(),
+            ItemType.ArmorHeavy.ToString(), ItemType.Adrenaline.ToString(), ItemType.Radio.ToString(), ItemType.GrenadeHE.ToString()
         };
 
         protected override void RoleAdded(Player player)
@@ -124,15 +118,12 @@ namespace SCP5K.SCPFouRole
             {
                 if (player == null || !player.IsConnected) return;
                 player.EnableEffect(EffectType.NightVision);
-
-                player.ClearInventory();
-                foreach (var item in CustomRoleItems) player.AddItem(item);
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
 
                 var message = "<color=yellow>你成为了混沌分裂者GRU小组的重装\n执行反基金会任务，守护人类！</color>";
 
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 15f, "CI-GRU-重装入场");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 15f, "CI-GRU-重装入场");
             });
         }
     }
@@ -146,12 +137,12 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "CI-GRU-步枪手";
         public override int MaxHealth { get; set; } = 100;
 
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
-        public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
+        public override List<string> Inventory { get; set; } = new List<string>
         {
-            ItemType.GunAK, ItemType.KeycardChaosInsurgency, ItemType.Medkit,
-            ItemType.ArmorCombat, ItemType.Adrenaline, ItemType.Radio
+            ItemType.GunAK.ToString(), ItemType.KeycardChaosInsurgency.ToString(), ItemType.Medkit.ToString(),
+            ItemType.ArmorCombat.ToString(), ItemType.Adrenaline.ToString(), ItemType.Radio.ToString()
         };
 
         protected override void RoleAdded(Player player)
@@ -162,14 +153,11 @@ namespace SCP5K.SCPFouRole
             {
                 if (player == null || !player.IsConnected) return;
                 player.EnableEffect(EffectType.NightVision);
-
-                player.ClearInventory();
-                foreach (var item in CustomRoleItems) player.AddItem(item);
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
 
                 var message = "<color=yellow>你成为了混沌分裂者GRU小组的步枪手\n执行反基金会任务，守护人类！</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 15f, "CI-GRU-步枪手入场");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 15f, "CI-GRU-步枪手入场");
             });
         }
     }
@@ -227,7 +215,7 @@ namespace SCP5K.SCPFouRole
             var chaoWave = new ChaosSpawnWave();
             Respawn.PlayEffect(chaoWave);
 
-            Timing.CallDelayed(13f,() =>
+            Timing.CallDelayed(13f, () =>
             {
                 for (int i = 0; i < roles.Length; i++)
                 {

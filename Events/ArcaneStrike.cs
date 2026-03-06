@@ -82,7 +82,7 @@ namespace SCP5K
             foreach (Player player in Player.List)
             {
                 var message = "<color=red>奇术打击已激活！30秒后释放...</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "奇术打击已激活");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 5f, "奇术打击已激活");
             }
 
 
@@ -142,7 +142,7 @@ namespace SCP5K
                 foreach (Player player in Player.List)
                 {
                     var message = "<color=green>奇术打击已取消</color>";
-                    HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "奇术打击已取消");
+                    HSMShowhint.HsmShowHint(player, message, 750, 0, 5f, "奇术打击已取消");
                 }
 
                 Log.Info("奇术打击已取消，所有状态已重置");
@@ -181,7 +181,7 @@ namespace SCP5K
                     {
                         player.EnableEffect(EffectType.Flashed, 4f);
                         var message = "<color=white>强烈的奇术能量正在聚集...</color>";
-                        HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "强烈的奇术能量正在聚集");
+                        HSMShowhint.HsmShowHint(player, message, 750, 0, 5f, "强烈的奇术能量正在聚集");
                     }
                 }
             });

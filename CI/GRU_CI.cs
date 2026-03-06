@@ -30,8 +30,15 @@ namespace SCP5K.SCPFouRole
         public override bool KeepPositionOnSpawn { get; set; } = false;
         public override string Description { get; set; }
 
-        public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
-        { ItemType.GunShotgun, ItemType.Medkit, ItemType.ArmorCombat, ItemType.Adrenaline, ItemType.KeycardChaosInsurgency, ItemType.GunRevolver };
+        public override List<string> Inventory { get; set; } = new List<string>
+        { 
+          ItemType.GunShotgun.ToString(),
+          ItemType.Medkit.ToString(), 
+          ItemType.ArmorCombat.ToString(), 
+          ItemType.Adrenaline.ToString(),
+          ItemType.KeycardChaosInsurgency.ToString(), 
+          ItemType.GunRevolver.ToString() 
+        };
 
         protected override void RoleAdded(Player player)
         {
@@ -44,13 +51,11 @@ namespace SCP5K.SCPFouRole
             {
                 if (player == null || !player.IsConnected) return;
 
-                player.ClearInventory();
-                foreach (var item in CustomRoleItems) player.AddItem(item);
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
                 player.IsBypassModeEnabled = true;
                 var message = "你成为了 GRU-CI 黑客\n<color=yellow>你的便携破解设备允许你开启设施内的任何门！</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 15f, "GRU-CI-黑客入场");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 15f, "GRU-CI-黑客入场");
             });
         }
 
@@ -73,11 +78,15 @@ namespace SCP5K.SCPFouRole
         public override bool KeepRoleOnDeath { get; set; } = false;
         public override bool KeepInventoryOnSpawn { get; set; } = false;
         public override bool KeepPositionOnSpawn { get; set; } = false;
-
         public override string Description { get; set; }
-
-        public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
-        { ItemType.GunAK, ItemType.Medkit, ItemType.ArmorCombat, ItemType.Adrenaline, ItemType.KeycardChaosInsurgency };
+        public override List<string> Inventory { get; set; } = new List<string>
+        { 
+          ItemType.GunAK.ToString(), 
+          ItemType.Medkit.ToString(), 
+          ItemType.ArmorCombat.ToString(), 
+          ItemType.Adrenaline.ToString(), 
+          ItemType.KeycardChaosInsurgency.ToString() 
+        };
 
         protected override void RoleAdded(Player player)
         {
@@ -90,13 +99,11 @@ namespace SCP5K.SCPFouRole
             {
                 if (player == null || !player.IsConnected) return;
 
-                player.ClearInventory();
-                foreach (var item in CustomRoleItems) player.AddItem(item);
 
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
                 var message = "你成为了 GRU-CI 突破手\n<color=yellow>你的专属AK枪械经过特殊改装，80伤害！</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 15f, "GRU-CI-突破手入场");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 15f, "GRU-CI-突破手入场");
 
                 Timing.CallDelayed(0.5f, () =>
                 {
@@ -127,8 +134,15 @@ namespace SCP5K.SCPFouRole
 
         public override string Description { get; set; }
 
-        public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
-        { ItemType.GunAK, ItemType.Medkit, ItemType.ArmorCombat, ItemType.Adrenaline, ItemType.KeycardChaosInsurgency, ItemType.GrenadeHE };
+        public override List<string> Inventory { get; set; } = new List<string>
+        { 
+          ItemType.GunAK.ToString(), 
+          ItemType.Medkit.ToString(), 
+          ItemType.ArmorCombat.ToString(), 
+          ItemType.Adrenaline.ToString(), 
+          ItemType.KeycardChaosInsurgency.ToString(),
+          ItemType.GrenadeHE.ToString() 
+        };
 
         protected override void RoleAdded(Player player)
         {
@@ -140,14 +154,10 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-
-                player.ClearInventory();
-                foreach (var item in CustomRoleItems) player.AddItem(item);
-
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
                 var message = "你成为了 GRU-CI 爆破手\n<color=yellow>使用技能键可不断补给高爆手雷！</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 15f, "GRU-CI-爆破手入场");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 15f, "GRU-CI-爆破手入场");
             });
         }
     }
@@ -167,8 +177,14 @@ namespace SCP5K.SCPFouRole
 
         public override string Description { get; set; }
 
-        public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
-        { ItemType.GunLogicer, ItemType.Medkit, ItemType.ArmorCombat, ItemType.Adrenaline, ItemType.KeycardChaosInsurgency };
+        public override List<string> Inventory { get; set; } = new List<string>
+        { 
+            ItemType.GunLogicer.ToString(), 
+            ItemType.Medkit.ToString(), 
+            ItemType.ArmorCombat.ToString(), 
+            ItemType.Adrenaline.ToString(), 
+            ItemType.KeycardChaosInsurgency.ToString() 
+        };
 
         protected override void RoleAdded(Player player)
         {
@@ -180,14 +196,10 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-
-                player.ClearInventory();
-                foreach (var item in CustomRoleItems) player.AddItem(item);
-
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
                 var message = "你成为了 GRU-CI 指挥官\n<color=yellow>使用技能键可获取一把充能电炮！</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 15f, "GRU-CI-指挥官入场");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 15f, "GRU-CI-指挥官入场");
             });
         }
     }
@@ -207,8 +219,14 @@ namespace SCP5K.SCPFouRole
 
         public override string Description { get; set; }
 
-        public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
-        { ItemType.GunShotgun, ItemType.Medkit, ItemType.ArmorCombat, ItemType.KeycardChaosInsurgency, ItemType.Radio };
+        public override List<string> Inventory { get; set; } = new List<string>
+        { 
+            ItemType.GunShotgun.ToString(),
+            ItemType.Medkit.ToString(),
+            ItemType.ArmorCombat.ToString(),
+            ItemType.KeycardChaosInsurgency.ToString(), 
+            ItemType.Radio.ToString() 
+        };
 
         protected override void RoleAdded(Player player)
         {
@@ -220,14 +238,10 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-
-                player.ClearInventory();
-                foreach (var item in CustomRoleItems) player.AddItem(item);
-
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
                 var message = "你成为了 GRU-CI 考察员\n<color=yellow>使用技能键触发 团队加速 / 牵引敌人</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 15f, "GRU-CI-考察员入场");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 15f, "GRU-CI-考察员入场");
             });
         }
     }
@@ -247,8 +261,14 @@ namespace SCP5K.SCPFouRole
 
         public override string Description { get; set; }
 
-        public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
-        { ItemType.GunAK, ItemType.Medkit, ItemType.ArmorCombat, ItemType.Adrenaline, ItemType.KeycardChaosInsurgency };
+        public override List<string> Inventory { get; set; } = new List<string>
+        { 
+            ItemType.GunAK.ToString(),
+            ItemType.Medkit.ToString(),
+            ItemType.ArmorCombat.ToString(),
+            ItemType.Adrenaline.ToString(),
+            ItemType.KeycardChaosInsurgency.ToString() 
+        };
 
         protected override void RoleAdded(Player player)
         {
@@ -260,16 +280,12 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-
-                player.ClearInventory();
-                foreach (var item in CustomRoleItems) player.AddItem(item);
-
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
                 // 清空装甲值
                 player.ArtificialHealth = 0;
                 var message = "你成为了 GRU-CI 士兵\n<color=yellow>你是GRU-CI的普通士兵，协助队友完成目标！</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 15f, "GRU-CI-士兵入场");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 15f, "GRU-CI-士兵入场");
             });
         }
     }
@@ -289,8 +305,14 @@ namespace SCP5K.SCPFouRole
 
         public override string Description { get; set; }
 
-        public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
-        { ItemType.GunAK, ItemType.Medkit, ItemType.ArmorCombat, ItemType.Adrenaline, ItemType.KeycardChaosInsurgency };
+        public override List<string> Inventory { get; set; } = new List<string>
+        { 
+            ItemType.GunAK.ToString(), 
+            ItemType.Medkit.ToString(), 
+            ItemType.ArmorCombat.ToString(), 
+            ItemType.Adrenaline.ToString(), 
+            ItemType.KeycardChaosInsurgency.ToString() 
+        };
 
         protected override void RoleAdded(Player player)
         {
@@ -302,16 +324,12 @@ namespace SCP5K.SCPFouRole
             Timing.CallDelayed(0.6f, () =>
             {
                 if (player == null || !player.IsConnected) return;
-
-                player.ClearInventory();
-                foreach (var item in CustomRoleItems) player.AddItem(item);
-
                 player.MaxHealth = this.MaxHealth;
                 player.Health = this.MaxHealth;
                 // 清空装甲值
                 player.ArtificialHealth = 0;
                 var message = "你成为了 GRU-CI 征召兵\n<color=yellow>你是GRU-CI的普通士兵，协助队友完成目标！</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 15f, "GRU-CI-征召兵入场");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 15f, "GRU-CI-征召兵入场");
             });
         }
     }
@@ -346,17 +364,17 @@ namespace SCP5K.SCPFouRole
             if (demoSkillCD.ContainsKey(player) && (DateTime.Now - demoSkillCD[player]).TotalSeconds < 35)
             {
                 var message = $"<color=red>火力充足冷却中: {35 - (DateTime.Now - demoSkillCD[player]).TotalSeconds:F1}秒</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 3f, "火力充足冷却"); return;
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 3f, "火力充足冷却"); return;
             }
             if (player.IsInventoryFull)
             {
                 var message = "<color=red>背包已满，无法获取手雷！</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 3f, "火力充足背包已满"); return;
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 3f, "火力充足背包已满"); return;
             }
             player.AddItem(ItemType.GrenadeHE);
             demoSkillCD[player] = DateTime.Now;
             var message2 = "<color=green>火力充足！已获得一枚高爆手雷！</color>";
-            HSMShowhint.HsmShowHint(player, message2, 600, 0, 4f, "火力充足获得");
+            HSMShowhint.HsmShowHint(player, message2, 750, 0, 4f, "火力充足获得");
         }
 
         public static void ExecuteCmdrSkill(Player player)
@@ -364,17 +382,17 @@ namespace SCP5K.SCPFouRole
             if (cmdrSkillUsed.Contains(player))
             {
                 var message = "<color=red>高斯放电装置只能使用一次！</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 3f, "高斯放电装置只能使用一次"); return;
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 3f, "高斯放电装置只能使用一次"); return;
             }
             if (player.IsInventoryFull)
             {
                 var message = "<color=red>背包已满，无法获取电炮！</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 3f, "高斯放电装置背包已满"); return;
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 3f, "高斯放电装置背包已满"); return;
             }
             player.AddItem(ItemType.MicroHID);
             cmdrSkillUsed.Add(player);
             var message2 = "<color=green>高斯放电装置已启动，你获得了电炮！</color>";
-            HSMShowhint.HsmShowHint(player, message2, 600, 0, 4f, "高斯放电装置已启动");
+            HSMShowhint.HsmShowHint(player, message2, 750, 0, 4f, "高斯放电装置已启动");
         }
 
         public static void ExecuteInvSkill1(Player player)
@@ -382,7 +400,7 @@ namespace SCP5K.SCPFouRole
             if (invSkill1CD.ContainsKey(player) && (DateTime.Now - invSkill1CD[player]).TotalSeconds < 50)
             {
                 var message = $"<color=red>寻找真相冷却中: {50 - (DateTime.Now - invSkill1CD[player]).TotalSeconds:F1}秒</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 3f, "寻找真相冷却"); return;
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 3f, "寻找真相冷却"); return;
             }
             invSkill1CD[player] = DateTime.Now;
             int count = 0;
@@ -392,7 +410,7 @@ namespace SCP5K.SCPFouRole
                 count++;
             }
             var message2 = $"<color=green>寻找真相：已为 {count} 名存活队友提供移速增益！</color>";
-            HSMShowhint.HsmShowHint(player, message2, 600, 0, 4f, "寻找真相");
+            HSMShowhint.HsmShowHint(player, message2, 750, 0, 4f, "寻找真相");
         }
 
         public static void ExecuteInvSkill2(Player player)
@@ -400,15 +418,15 @@ namespace SCP5K.SCPFouRole
             if (invSkill2Used.Contains(player))
             {
                 var message = "<color=red>零位能量场牵引器只能使用一次！</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 3f, "零位能量场牵引器只能使用一次"); return;
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 3f, "零位能量场牵引器只能使用一次"); return;
             }
 
             // 搜索敌对阵营 (非自身非CI同阵营)
-            var enemies = Player.List.Where(p => p.IsAlive && p.Role.Team != Team.ChaosInsurgency ).ToList();
+            var enemies = Player.List.Where(p => p.IsAlive && p.Role.Team != Team.ChaosInsurgency).ToList();
             if (enemies.Count == 0)
             {
                 var message = "<color=yellow>当前没有可牵引的敌方单位！(保留技能使用次数)</color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 3f, "没有可牵引"); return;
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 3f, "没有可牵引"); return;
             }
 
             var target = enemies[UnityEngine.Random.Range(0, enemies.Count)];
@@ -416,10 +434,10 @@ namespace SCP5K.SCPFouRole
             target.EnableEffect(EffectType.Ensnared, 255, 3f);
 
             var message2 = $"<color=red>你被零位能量场牵引了！禁锢3秒！</color>";
-            HSMShowhint.HsmShowHint(target, message2, 600, 0, 3f, "被零位能量场牵引");
+            HSMShowhint.HsmShowHint(target, message2, 750, 0, 3f, "被零位能量场牵引");
 
             var message3 = $"<color=green>牵引成功！已将 {target.Nickname} 拉至面前！</color>";
-            HSMShowhint.HsmShowHint(player, message2, 600, 0, 3f, "牵引成功");
+            HSMShowhint.HsmShowHint(player, message2, 750, 0, 3f, "牵引成功");
 
             invSkill2Used.Add(player);
         }

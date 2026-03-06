@@ -14,7 +14,8 @@ namespace SCP5K.Events
             var display = HintServiceMeow.Core.Utilities.PlayerDisplay.Get(player);
             if (display == null) return;
 
-            display.RemoveHint(Id); 
+            display.RemoveHint(Id);
+            display.ClearHint();
 
             var hint = new HintServiceMeow.Core.Models.Hints.Hint
             {
@@ -23,7 +24,7 @@ namespace SCP5K.Events
                 XCoordinate = XCoordinate,
                 Alignment = HintAlignment,
                 Id = Id,
-                FontSize = 50
+                FontSize = 40
                 
             };
 

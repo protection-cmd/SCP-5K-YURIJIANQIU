@@ -16,20 +16,41 @@ namespace SCP5K.SCPFouRole
         public override string Name { get; set; } = "SCP-105-鸢尾";
         public override string Description { get; set; }
         public override string CustomInfo { get; set; } = "SCP-105-鸢尾";
+        public override bool KeepRoleOnChangingRole { get; set; } = false;
+        public override bool KeepRoleOnDeath { get; set; } = false;
+        public override bool KeepInventoryOnSpawn { get; set; } = false;
+        public override bool KeepPositionOnSpawn { get; set; } = false;
+        public override List<string> Inventory { get; set; } = new List<string>
+    {
+        ItemType.GunFRMG0.ToString(),
+        ItemType.KeycardO5.ToString(),
+        ItemType.ArmorHeavy.ToString(),
+        ItemType.Adrenaline.ToString(),
+        ItemType.Medkit.ToString(),
+        ItemType.Radio.ToString()
+    };
 
-        public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
-        { ItemType.GunFRMG0, ItemType.KeycardO5, ItemType.ArmorHeavy,
-                ItemType.Adrenaline, ItemType.Medkit, ItemType.Radio };
+
 
         protected override void RoleAdded(Player player)
         {
             base.RoleAdded(player);
+            Alpha9Manager.Player105 = player;
+            if (!Alpha9Manager.A9TeamMembers.Contains(player))
+                Alpha9Manager.A9TeamMembers.Add(player);
             FactionManager.AddPlayer(player, FactionType.Alpha9);
             Timing.CallDelayed(0.6f, () =>
             {
-                foreach (var item in CustomRoleItems) player.AddItem(item);
                 player.EnableEffect(EffectType.Slowness, 20);
             });
+        }
+
+        protected override void RoleRemoved(Player player)
+        {
+            base.RoleRemoved(player);
+            if (Alpha9Manager.Player105 == player)
+                Alpha9Manager.Player105 = null;
+            Alpha9Manager.A9TeamMembers.Remove(player);
         }
     }
 
@@ -41,20 +62,40 @@ namespace SCP5K.SCPFouRole
         public override string Name { get; set; } = "SCP-076-2-亚伯";
         public override string Description { get; set; }
         public override string CustomInfo { get; set; } = "SCP-076-2-亚伯";
+        public override bool KeepRoleOnChangingRole { get; set; } = false;
+        public override bool KeepRoleOnDeath { get; set; } = false;
+        public override bool KeepInventoryOnSpawn { get; set; } = false;
+        public override bool KeepPositionOnSpawn { get; set; } = false;
 
-        public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
-        { ItemType.SCP1509, ItemType.KeycardO5, ItemType.ArmorHeavy,
-                ItemType.Adrenaline, ItemType.SCP500, ItemType.Radio };
+        public override List<string> Inventory { get; set; } = new List<string>
+        { 
+            ItemType.SCP1509.ToString(),
+            ItemType.KeycardO5.ToString(),
+            ItemType.ArmorHeavy.ToString(),
+            ItemType.Adrenaline.ToString(),
+            ItemType.SCP500.ToString(), 
+            ItemType.Radio.ToString() 
+        };
 
         protected override void RoleAdded(Player player)
         {
             base.RoleAdded(player);
+            Alpha9Manager.Player076 = player;
+            if (!Alpha9Manager.A9TeamMembers.Contains(player))
+                Alpha9Manager.A9TeamMembers.Add(player);
             FactionManager.AddPlayer(player, FactionType.Alpha9);
             Timing.CallDelayed(0.6f, () =>
             {
-                foreach (var item in CustomRoleItems) player.AddItem(item);
-                player.HumeShield = 50; // 休谟护盾
+                player.HumeShield = 50; 
             });
+        }
+
+        protected override void RoleRemoved(Player player)
+        {
+            base.RoleRemoved(player);
+            if (Alpha9Manager.Player076 == player)
+                Alpha9Manager.Player076 = null;
+            Alpha9Manager.A9TeamMembers.Remove(player);
         }
     }
 
@@ -66,20 +107,37 @@ namespace SCP5K.SCPFouRole
         public override string Name { get; set; } = "Alpha-9 战斗特工";
         public override string Description { get; set; }
         public override string CustomInfo { get; set; } = "Alpha-9 战斗特工";
+        public override bool KeepRoleOnChangingRole { get; set; } = false;
+        public override bool KeepRoleOnDeath { get; set; } = false;
+        public override bool KeepInventoryOnSpawn { get; set; } = false;
+        public override bool KeepPositionOnSpawn { get; set; } = false;
 
-        public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
-        { ItemType.GunFRMG0, ItemType.KeycardO5, ItemType.ArmorHeavy,
-                ItemType.Adrenaline, ItemType.Medkit, ItemType.Radio,ItemType.SCP500 };
+        public override List<string> Inventory { get; set; } = new List<string>
+        { ItemType.GunFRMG0.ToString(), 
+          ItemType.KeycardO5.ToString(), 
+          ItemType.ArmorHeavy.ToString(),
+          ItemType.Adrenaline.ToString(), 
+          ItemType.Medkit.ToString(),
+          ItemType.Radio.ToString(),
+          ItemType.SCP500.ToString() 
+        };
 
         protected override void RoleAdded(Player player)
         {
             base.RoleAdded(player);
+            if (!Alpha9Manager.A9TeamMembers.Contains(player))
+                Alpha9Manager.A9TeamMembers.Add(player);
             FactionManager.AddPlayer(player, FactionType.Alpha9);
             Timing.CallDelayed(0.6f, () =>
             {
-                foreach (var item in CustomRoleItems) player.AddItem(item);
                 player.EnableEffect(EffectType.DamageReduction, 100);
             });
+        }
+
+        protected override void RoleRemoved(Player player)
+        {
+            base.RoleRemoved(player);
+            Alpha9Manager.A9TeamMembers.Remove(player);
         }
     }
 
@@ -91,18 +149,37 @@ namespace SCP5K.SCPFouRole
         public override string Name { get; set; } = "Alpha-9 士兵";
         public override string Description { get; set; }
         public override string CustomInfo { get; set; } = "Alpha-9 士兵";
-        public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
-        { ItemType.GunE11SR, ItemType.KeycardO5, ItemType.ArmorHeavy,
-                ItemType.Adrenaline, ItemType.Medkit, ItemType.Radio };
+        public override bool KeepRoleOnChangingRole { get; set; } = false;
+        public override bool KeepRoleOnDeath { get; set; } = false;
+        public override bool KeepInventoryOnSpawn { get; set; } = false;
+        public override bool KeepPositionOnSpawn { get; set; } = false;
+
+        public override List<string> Inventory { get; set; } = new List<string>
+        { 
+          ItemType.GunE11SR.ToString(), 
+          ItemType.KeycardO5.ToString(),
+          ItemType.ArmorHeavy.ToString(),
+          ItemType.Adrenaline.ToString(),   
+          ItemType.Medkit.ToString(), 
+          ItemType.Radio.ToString() 
+        };
+
         protected override void RoleAdded(Player player)
         {
             base.RoleAdded(player);
+            if (!Alpha9Manager.A9TeamMembers.Contains(player))
+                Alpha9Manager.A9TeamMembers.Add(player);
             FactionManager.AddPlayer(player, FactionType.Alpha9);
             Timing.CallDelayed(0.6f, () =>
             {
-                foreach (var item in CustomRoleItems) player.AddItem(item);
                 player.EnableEffect(EffectType.DamageReduction, 50);
             });
+        }
+
+        protected override void RoleRemoved(Player player)
+        {
+            base.RoleRemoved(player);
+            Alpha9Manager.A9TeamMembers.Remove(player);
         }
     }
 }

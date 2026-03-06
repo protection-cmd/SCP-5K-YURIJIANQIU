@@ -23,13 +23,17 @@ namespace SCP5K.SCPFouRole
         public static Dictionary<Player, bool> VoteRecords = new Dictionary<Player, bool>();
         public static bool IsVotingActive = false;
         public static bool HasRebelled = false;
+        public static bool IsRoleChanging = false; 
 
         public static Player Player105;
         public static Player Player076;
 
-        // 技能CD记录
-        public static Dictionary<Player, float> Cooldowns105 = new Dictionary<Player, float>();
-        public static Dictionary<Player, float> Cooldowns076 = new Dictionary<Player, float>();
+        public static Dictionary<Player, float> Cooldowns105_Skill1 = new Dictionary<Player, float>();
+        public static Dictionary<Player, float> Cooldowns105_Skill2 = new Dictionary<Player, float>();
+        public static Dictionary<Player, float> Cooldowns105_Skill4 = new Dictionary<Player, float>();
+
+        public static Dictionary<Player, float> Cooldowns076_Skill1 = new Dictionary<Player, float>();
+        public static Dictionary<Player, float> Cooldowns076_Skill2 = new Dictionary<Player, float>();
 
         // 105 的坐标记录
         public static List<Vector3> CameraRecords105 = new List<Vector3>();
@@ -41,6 +45,7 @@ namespace SCP5K.SCPFouRole
 
         private static CoroutineHandle _voteCoroutine;
         private static CoroutineHandle _076RegenCoroutine;
+        private static CoroutineHandle _076HumeCoroutine;
 
         // 静态角色实例，供 Plugin.cs 注册使用
         public static SCP105 Role105 = new SCP105();
@@ -48,7 +53,6 @@ namespace SCP5K.SCPFouRole
         public static A9CombatAgent RoleAgent = new A9CombatAgent();
         public static A9Soldier RoleSoldier = new A9Soldier();
 
-        // 用于 Bot 的列表
         public static List<Npc> A9Bots = new List<Npc>();
 
         public static bool SpawnAlpha9(List<Player> players)
@@ -58,21 +62,17 @@ namespace SCP5K.SCPFouRole
             ResetA9();
             if (players.Count < 2) return false;
 
-
             int spawnCount = Mathf.Min(players.Count, 6);
             List<Player> selected = players.Take(spawnCount).ToList();
 
             Player105 = selected[0];
             Player076 = selected[1];
 
-            A9TeamMembers.Add(Player105);
-            A9TeamMembers.Add(Player076);
             Role105.AddRole(Player105);
             Role076.AddRole(Player076);
 
             for (int i = 2; i < spawnCount; i++)
             {
-                A9TeamMembers.Add(selected[i]);
                 if (i == 2)
                     RoleAgent.AddRole(selected[i]);
                 else
@@ -86,11 +86,6 @@ namespace SCP5K.SCPFouRole
             }
 
             _voteCoroutine = Timing.RunCoroutine(VoteTimer());
-            _076RegenCoroutine = Timing.RunCoroutine(Regen076Routine());
-
-            Exiled.Events.Handlers.Player.Died += OnPlayerDied;
-            Exiled.Events.Handlers.Player.UsingItem += OnUsed1344;
-            Exiled.Events.Handlers.Player.Hurting += OnAlpha9Hurting;
 
             return true;
         }
@@ -106,16 +101,48 @@ namespace SCP5K.SCPFouRole
             if (noVotes > A9TeamMembers.Count / 2)
             {
                 HasRebelled = false;
-                foreach (var p in A9TeamMembers)
+                IsRoleChanging = true; 
+
+                foreach (var p in A9TeamMembers.ToList())
                 {
                     p.Broadcast(5, "<b>投票结果：忠诚！向顽抗者降下刑罚！！！</b>");
 
-                    if (Role105.Check(p)) p.Role.Set(RoleTypeId.NtfCaptain, RoleSpawnFlags.None);
-                    else if (Role076.Check(p)) p.Role.Set(RoleTypeId.NtfSergeant, RoleSpawnFlags.None);
+                    var items = p.Items.Select(x => x.Type).ToList();
+                    var ammo = p.Ammo.ToDictionary(x => x.Key, x => x.Value);
+                    float health = p.Health;
+                    int maxHealth = (int)p.MaxHealth;
+                    float hume = p.HumeShield;
+
+                    bool was105 = (p == Player105);
+                    bool was076 = (p == Player076);
+                    bool wasAgent = RoleAgent.Check(p);
+                    bool wasSoldier = RoleSoldier.Check(p);
+
+                    if (was105) p.Role.Set(RoleTypeId.NtfCaptain, RoleSpawnFlags.None);
+                    else if (was076) p.Role.Set(RoleTypeId.NtfSergeant, RoleSpawnFlags.None);
                     else p.Role.Set(RoleTypeId.NtfPrivate, RoleSpawnFlags.None);
 
-                    p.AddItem(ItemType.Radio);
+                    Timing.CallDelayed(0.1f, () =>
+                    {
+                        if (p == null || !p.IsAlive) return;
+
+                        p.ClearInventory();
+                        foreach (var item in items) p.AddItem(item);
+                        foreach (var kvp in ammo) p.AddAmmo((AmmoType)kvp.Key, kvp.Value);
+                        p.AddItem(ItemType.Radio);
+
+                        p.MaxHealth = maxHealth;
+                        p.Health = health;
+                        p.HumeShield = hume;
+
+                        // 恢复特有 buff
+                        if (was105) p.EnableEffect(EffectType.Slowness, 20);
+                        if (wasAgent) p.EnableEffect(EffectType.DamageReduction, 100);
+                        if (wasSoldier) p.EnableEffect(EffectType.DamageReduction, 50);
+                    });
                 }
+
+                Timing.CallDelayed(0.2f, () => IsRoleChanging = false);
             }
             else
             {
@@ -135,25 +162,18 @@ namespace SCP5K.SCPFouRole
 
         private static void OnPlayerDied(DiedEventArgs ev)
         {
-            // 076死亡，105获得加成
             if (ev.Player == Player076 && Player105 != null && Player105.IsAlive)
             {
                 var message = "<color=red><b>SCP-076-2已死亡\n在挚友的尸体面前，你的想法是何呢？\n去复仇吧，速度大幅提升！</b></color>";
-                HSMShowhint.HsmShowHint(Player105, message, 600, 0, 5f, "挚友的尸体");
+                HSMShowhint.HsmShowHint(Player105, message, 750, 0, 5f, "挚友的尸体");
                 Player105.DisableEffect(EffectType.Slowness);
                 Player105.EnableEffect(EffectType.MovementBoost, 100, 0f);
             }
-            // 105死亡，076获得加成
             else if (ev.Player == Player105 && Player076 != null && Player076.IsAlive)
             {
                 var message = "<color=red><b>SCP-105已死亡\n在挚友的尸体面前，你的想法是何呢？\n去复仇吧，速度大幅提升！</b></color>";
-                HSMShowhint.HsmShowHint(Player076, message, 600, 0, 5f, "挚友的尸体");
+                HSMShowhint.HsmShowHint(Player076, message, 750, 0, 5f, "挚友的尸体");
                 Player076.EnableEffect(EffectType.MovementBoost, 50, 0f);
-            }
-
-            if (ev.Player == Player076)
-            {
-                if (_076RegenCoroutine.IsRunning) Timing.KillCoroutines(_076RegenCoroutine);
             }
         }
 
@@ -170,8 +190,18 @@ namespace SCP5K.SCPFouRole
             }
         }
 
+        private static IEnumerator<float> HumeShield076Routine()
+        {
+            while (true)
+            {
+                yield return Timing.WaitForSeconds(10f);
+                if (Player076 != null && Player076.IsAlive)
+                {
+                    Player076.HumeShield = 50;
+                }
+            }
+        }
 
-        // 技能冷却系统
         private static bool CheckCooldown(Player player, Dictionary<Player, float> cooldownDict, float cooldownTime, out float remaining)
         {
             if (cooldownDict.TryGetValue(player, out float lastTime))
@@ -189,69 +219,78 @@ namespace SCP5K.SCPFouRole
         }
 
 
+        // ==========================================
         // SCP-105 技能
+        // ==========================================
         public static void Execute105Skill1(Player player)
         {
             if (CameraUses >= 3)
             {
                 var message1 = "<color=red><b>你已经使用过3次SCP-105-B技能了！</b></color>";
-                HSMShowhint.HsmShowHint(player, message1, 600, 0, 5f, "SCP-105-B");
+                HSMShowhint.HsmShowHint(player, message1, 750, 0, 5f, "SCP-105-B");
                 return;
             }
-            if (!CheckCooldown(player, Cooldowns105, 60f, out float rem))
+            if (!CheckCooldown(player, Cooldowns105_Skill1, 60f, out float rem))
             {
                 var message2 = $"<color=red><b>SCP-105-B冷却中，剩余 {rem:F1} 秒</b></color>";
-                HSMShowhint.HsmShowHint(player, message2, 600, 0, 5f, "SCP-105-B冷却");
+                HSMShowhint.HsmShowHint(player, message2, 750, 0, 5f, "SCP-105-B冷却");
                 return;
             }
 
             player.AddItem(ItemType.SCP1344);
             CameraUses++;
-            SetCooldown(player, Cooldowns105);
+            SetCooldown(player, Cooldowns105_Skill1);
             var message3 = "<color=#00FFFF>已发放SCP-105-B，可使用它记录当前位置！(半径5米圆)</color>";
-            HSMShowhint.HsmShowHint(player, message3, 600, 0, 5f, "SCP-105-B发放");
+            HSMShowhint.HsmShowHint(player, message3, 750, 0, 5f, "SCP-105-B发放");
         }
 
         private static void OnUsed1344(UsingItemEventArgs ev)
         {
-            if (Role105.Check(ev.Player) && ev.Item.Type == ItemType.SCP1344)
+            if (ev.Player == Player105 && ev.Item.Type == ItemType.SCP1344)
             {
                 ev.IsAllowed = false;
                 ev.Player.RemoveItem(ev.Item);
                 CameraRecords105.Add(ev.Player.Position);
                 var message = $"<color=green><b>成功记录坐标！当前记录点数量: {CameraRecords105.Count}</b></color>";
-                HSMShowhint.HsmShowHint(ev.Player, message, 600, 0, 5f, "成功记录坐标");
-                Log.Info($"[Alpha-9] {ev.Player.Nickname} 记录了一个坐标点: {ev.Player.Position}");
+                HSMShowhint.HsmShowHint(ev.Player, message, 750, 0, 5f, "成功记录坐标");
             }
         }
 
         public static void Execute105Skill2(Player player)
         {
-            if (!CheckCooldown(player, Cooldowns105, 90f, out float rem))
+            if (!CheckCooldown(player, Cooldowns105_Skill2, 90f, out float rem))
             {
                 var message = $"<color=red><b>镜面攻击冷却中，剩余 {rem:F1} 秒</b></color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "技能二冷却中");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 5f, "技能二冷却中");
                 return;
             }
 
             if (CameraRecords105.Count == 0)
             {
                 var message = "<color=red><b>没有记录任何坐标点，无法召唤！</b></color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "没有记录任何坐标点");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 5f, "没有记录任何坐标点");
                 return;
             }
 
-            SetCooldown(player, Cooldowns105);
+            SetCooldown(player, Cooldowns105_Skill2);
             var message2 = "<color=yellow><b>镜面攻击：在记录点召唤追踪 Bot！</b></color>";
-            HSMShowhint.HsmShowHint(player, message2, 600, 0, 5f, "召唤追踪 Bot");
+            HSMShowhint.HsmShowHint(player, message2, 750, 0, 5f, "召唤追踪 Bot");
+
+            foreach (var oldBot in A9Bots.ToList())
+            {
+                if (oldBot != null)
+                {
+                    oldBot.ClearInventory(); 
+                    oldBot.Destroy();
+                }
+            }
+            A9Bots.Clear();
 
             foreach (var pos in CameraRecords105)
             {
                 Npc bot = Npc.Spawn("SCP-105-Bot", RoleTypeId.Tutorial, pos);
                 bot.Health = 1000;
                 bot.MaxHealth = 1000;
-                bot.AddItem(ItemType.GunAK);
-                bot.CurrentItem = bot.Items.FirstOrDefault(x => x.Type == ItemType.GunAK);
 
                 A9Bots.Add(bot);
                 bot.GameObject.AddComponent<Alpha9BotAI>().Init(pos, 5f);
@@ -263,21 +302,22 @@ namespace SCP5K.SCPFouRole
             if (Skill3Used)
             {
                 var message = "<color=red><b>你已经使用过这个技能了！</b></color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "使用过");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 5f, "使用过");
                 return;
             }
             Skill3Used = true;
 
-            List<Vector3> targetPositions = CameraRecords105.Count > 0
+            bool hasRecords = CameraRecords105.Count > 0;
+
+            List<Vector3> targetPositions = hasRecords
                 ? new List<Vector3>(CameraRecords105)
                 : new List<Vector3> { player.Position };
 
             var message2 = "<color=red><b>出手，出手，再出手！</b></color>";
-            HSMShowhint.HsmShowHint(player, message2, 600, 0, 5f, "出手");
+            HSMShowhint.HsmShowHint(player, message2, 750, 0, 5f, "出手");
 
             foreach (var centerPos in targetPositions)
             {
-                // 在半径5米圆内每一米放一个0.1秒引爆的手雷
                 for (float x = -5; x <= 5; x += 1f)
                 {
                     for (float z = -5; z <= 5; z += 1f)
@@ -295,27 +335,36 @@ namespace SCP5K.SCPFouRole
 
             CameraRecords105.Clear();
 
-            // 105 自爆
-            ExplosiveGrenade selfBomb = (ExplosiveGrenade)Item.Create(ItemType.GrenadeHE);
-            selfBomb.FuseTime = 0.1f;
-            selfBomb.SpawnActive(player.Position, player);
-            player.Kill("自爆牺牲！");
+            if (!hasRecords)
+            {
+                ExplosiveGrenade selfBomb = (ExplosiveGrenade)Item.Create(ItemType.GrenadeHE);
+                selfBomb.FuseTime = 0.1f;
+                selfBomb.SpawnActive(player.Position, player);
+                player.Kill("自爆牺牲！");
+            }
+            else
+            {
+                var message3 = "<color=green><b>远程打击已完成！</b></color>";
+                HSMShowhint.HsmShowHint(player, message3, 750, 0, 5f, "远程打击成功");
+            }
+
             Skill3Used = false;
         }
 
         public static void Execute105Skill4(Player player)
         {
-            if (!CheckCooldown(player, Cooldowns105, 120f, out float rem))
+
+            if (!CheckCooldown(player, Cooldowns105_Skill4, 120f, out float rem))
             {
                 var message1 = $"<color=red><b>在那神谕的黎明冷却中\n剩余 {rem:F1} 秒</b></color>";
-                HSMShowhint.HsmShowHint(player, message1, 600, 0, 5f, "在那神谕的黎明冷却");
+                HSMShowhint.HsmShowHint(player, message1, 750, 0, 5f, "在那神谕的黎明冷却");
                 return;
             }
 
-            SetCooldown(player, Cooldowns105);
+            SetCooldown(player, Cooldowns105_Skill4);
             IsDawnOfOracleActive = true;
             var message = "<color=orange><b>狂欢，在那神谕的黎明！\n召唤物、076与自身增伤100% 持续10秒！</b></color>";
-            HSMShowhint.HsmShowHint(player, message, 600, 0, 10f, "在那神谕的黎明");
+            HSMShowhint.HsmShowHint(player, message, 750, 0, 10f, "在那神谕的黎明");
 
             Timing.CallDelayed(10f, () =>
             {
@@ -323,7 +372,7 @@ namespace SCP5K.SCPFouRole
                 if (player != null)
                 {
                     var message2 = "<color=orange><b>神谕的黎明已过\n增伤效果消失！</b></color>";
-                    HSMShowhint.HsmShowHint(player, message2, 600, 0, 5f, "神谕的黎明已过");
+                    HSMShowhint.HsmShowHint(player, message2, 750, 0, 5f, "神谕的黎明已过");
                 }
             });
         }
@@ -333,14 +382,14 @@ namespace SCP5K.SCPFouRole
         // ==========================================
         public static void Execute076Skill1(Player player)
         {
-            if (!CheckCooldown(player, Cooldowns076, 35f, out float rem))
+            if (!CheckCooldown(player, Cooldowns076_Skill1, 35f, out float rem))
             {
                 var message1 = $"<color=red><b>忘却往昔，燃尽此身冷却中\n剩余 {rem:F1} 秒</b></color>";
-                HSMShowhint.HsmShowHint(player, message1, 600, 0, 5f, "忘却往昔");
+                HSMShowhint.HsmShowHint(player, message1, 750, 0, 5f, "忘却往昔");
                 return;
             }
 
-            SetCooldown(player, Cooldowns076);
+            SetCooldown(player, Cooldowns076_Skill1);
             player.MaxHealth -= 30;
             if (player.Health > player.MaxHealth) player.Health = player.MaxHealth;
             if (player.MaxHealth <= 0)
@@ -350,9 +399,9 @@ namespace SCP5K.SCPFouRole
             }
 
             _076Skill1Active = true;
-            player.EnableEffect(EffectType.MovementBoost, 40, 10f); // 持续10秒
+            player.EnableEffect(EffectType.MovementBoost, 40, 10f);
             var message = "<color=red><b>忘却往昔，燃尽此身！\n1509伤害提升至150，移速增加！持续10秒！</b></color>";
-            HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "燃尽此身");
+            HSMShowhint.HsmShowHint(player, message, 750, 0, 5f, "燃尽此身");
 
             Timing.CallDelayed(10f, () =>
             {
@@ -362,14 +411,14 @@ namespace SCP5K.SCPFouRole
 
         public static void Execute076Skill2(Player player)
         {
-            if (!CheckCooldown(player, Cooldowns076, 60f, out float rem))
+            if (!CheckCooldown(player, Cooldowns076_Skill2, 60f, out float rem))
             {
                 var message = $"<color=red><b>徒有残躯，何谓未来冷却中\n剩余 {rem:F1} 秒</b></color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "徒有残躯");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 5f, "徒有残躯");
                 return;
             }
 
-            SetCooldown(player, Cooldowns076);
+            SetCooldown(player, Cooldowns076_Skill2);
             player.MaxHealth -= 20;
             if (player.Health > player.MaxHealth) player.Health = player.MaxHealth;
             if (player.MaxHealth <= 0)
@@ -378,10 +427,9 @@ namespace SCP5K.SCPFouRole
                 return;
             }
 
-            // 根据要求：获得90%伤害抗性，即 DamageReduction, 180, 10s
             player.EnableEffect(EffectType.DamageReduction, 180, 10f);
             var message2 = "<color=yellow><b>徒有残躯，何谓未来！\n获得90%伤害抗性10秒！</b></color>";
-            HSMShowhint.HsmShowHint(player, message2, 600, 0, 5f, "何谓未来");
+            HSMShowhint.HsmShowHint(player, message2, 750, 0, 5f, "何谓未来");
         }
 
         public static void Execute076Skill3(Player player)
@@ -389,63 +437,60 @@ namespace SCP5K.SCPFouRole
             if (Skill076_3Used)
             {
                 var message = "<color=red><b>你已经使用过这个技能了！</b></color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "使用过");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 5f, "使用过");
                 return;
             }
             if (Player105 == null || !Player105.IsAlive)
             {
                 var message = "<color=red><b>SCP-105已死亡\n无法使用这个技能！</b></color>";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "SCP-105死亡");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 5f, "SCP-105死亡");
                 return;
             }
 
             Skill076_3Used = true;
-            // 给予105额外30%移速持续10秒
             Player105.EnableEffect(EffectType.MovementBoost, 30, 10f);
             var message1 = "<color=yellow><b>想象一朵来自远方的玫瑰！\n已为 105 提供额外加速！</b></color>";
-            HSMShowhint.HsmShowHint(player, message1, 600, 0, 5f, "想象一朵来自远方的玫瑰");
+            HSMShowhint.HsmShowHint(player, message1, 750, 0, 5f, "想象一朵来自远方的玫瑰");
             var message2 = "<color=yellow><b>想象一朵来自远方的玫瑰！\n获得了来自 076 的加速支援！</b></color>";
-            HSMShowhint.HsmShowHint(Player105, message2, 600, 0, 5f, "想象一朵来自远方的玫瑰");
+            HSMShowhint.HsmShowHint(Player105, message2, 750, 0, 5f, "想象一朵来自远方的玫瑰");
         }
 
-        // ==========================================
-        // 伤害判定与重置
-        // ==========================================
+
         private static void OnAlpha9Hurting(HurtingEventArgs ev)
         {
             if (ev.Attacker == null || ev.Player == null)
             {
-                Log.Warn($"{ev.Attacker}或者{ev.Player}爆炸了");
                 return;
             }
 
-            // 105 技能四：100% 增伤
-            if (IsDawnOfOracleActive && (Role105.Check(ev.Attacker) || Role076.Check(ev.Attacker) || ev.Attacker.Nickname == "SCP-105-Bot"))
-            {
-                ev.Amount *= 2f;
-            }
-            bool is1509Damage = ev.DamageHandler.Type == DamageType.Scp1509;
 
-            // 076 技能一：1509 伤害变为 150/刀
+            if (ev.Attacker.Nickname == "SCP-105-Bot" && ev.DamageHandler.Type == DamageType.AK)
+            {
+                ev.Amount = 15f;
+            }
+
+
+            bool is1509Damage = ev.DamageHandler.Type == DamageType.Scp1509;
             if (is1509Damage)
             {
-                Log.Info($"检测到1509伤害，攻击者: {ev.Attacker.Nickname}, 伤害来源: {ev.DamageHandler.Type}");
-                if (Role076.Check(ev.Attacker))
+                if (ev.Attacker == Player076 && _076Skill1Active)
                 {
-                    Log.Info($"攻击者是076，原始伤害: {ev.Amount}");
-                    if (_076Skill1Active)
-                    {
-                        Log.Info("伤害已经修改");
-                        ev.Amount = 150f;
-                    }
+                    ev.Amount = 150f;
                 }
             }
 
 
-            // Bot AK 伤害最高 15/枪
-            if (ev.Attacker.Nickname == "SCP-105-Bot" && ev.DamageHandler.Type == DamageType.Firearm)
+            if (IsDawnOfOracleActive && (ev.Attacker == Player105 || ev.Attacker == Player076 || ev.Attacker.Nickname == "SCP-105-Bot"))
             {
-                if (ev.Amount > 15f) ev.Amount = 15f;
+                ev.Amount *= 2f;
+            }
+        }
+
+        private static void On076HoldSCP1509(ChangingItemEventArgs ev)
+        {
+            if (ev.Player == Player076 && ev.Item.Type == ItemType.SCP1509)
+            {
+                ev.Player.HumeShield = 50;
             }
         }
 
@@ -454,8 +499,13 @@ namespace SCP5K.SCPFouRole
             A9TeamMembers.Clear();
             VoteRecords.Clear();
             CameraRecords105.Clear();
-            Cooldowns105.Clear();
-            Cooldowns076.Clear();
+
+
+            Cooldowns105_Skill1.Clear();
+            Cooldowns105_Skill2.Clear();
+            Cooldowns105_Skill4.Clear();
+            Cooldowns076_Skill1.Clear();
+            Cooldowns076_Skill2.Clear();
 
             foreach (var bot in A9Bots) { if (bot != null) bot.Destroy(); }
             A9Bots.Clear();
@@ -471,99 +521,80 @@ namespace SCP5K.SCPFouRole
             Player076 = null;
 
             if (_voteCoroutine.IsRunning) Timing.KillCoroutines(_voteCoroutine);
-            if (_076RegenCoroutine.IsRunning) Timing.KillCoroutines(_076RegenCoroutine);
-
-            Exiled.Events.Handlers.Player.Died -= OnPlayerDied;
-            Exiled.Events.Handlers.Player.UsingItem -= OnUsed1344;
-            Exiled.Events.Handlers.Player.Hurting -= OnAlpha9Hurting;
         }
+
         public static void RegisterEvents()
         {
-            A9TeamMembers.Clear();
-            VoteRecords.Clear();
-            CameraRecords105.Clear();
-            Cooldowns105.Clear();
-            Cooldowns076.Clear();
+            ResetA9();
 
-            foreach (var bot in A9Bots) { if (bot != null) bot.Destroy(); }
-            A9Bots.Clear();
-
-            CameraUses = 0;
-            Skill3Used = false;
-            Skill076_3Used = false;
-            IsDawnOfOracleActive = false;
-            _076Skill1Active = false;
-            IsVotingActive = false;
-            HasRebelled = false;
-            Player105 = null;
-            Player076 = null;
-
-            _voteCoroutine = Timing.RunCoroutine(VoteTimer());
             _076RegenCoroutine = Timing.RunCoroutine(Regen076Routine());
+            _076HumeCoroutine = Timing.RunCoroutine(HumeShield076Routine());
 
             Exiled.Events.Handlers.Player.Died += OnPlayerDied;
             Exiled.Events.Handlers.Player.UsingItem += OnUsed1344;
             Exiled.Events.Handlers.Player.Hurting += OnAlpha9Hurting;
+            Exiled.Events.Handlers.Player.ChangingItem += On076HoldSCP1509;
         }
 
         public static void UnregisterEvents()
         {
-            A9TeamMembers.Clear();
-            VoteRecords.Clear();
-            CameraRecords105.Clear();
-            Cooldowns105.Clear();
-            Cooldowns076.Clear();
+            ResetA9();
 
-            foreach (var bot in A9Bots) { if (bot != null) bot.Destroy(); }
-            A9Bots.Clear();
-
-            CameraUses = 0;
-            Skill3Used = false;
-            Skill076_3Used = false;
-            IsDawnOfOracleActive = false;
-            _076Skill1Active = false;
-            IsVotingActive = false;
-            HasRebelled = false;
-            Player105 = null;
-            Player076 = null;
-
-            if (_voteCoroutine.IsRunning) Timing.KillCoroutines(_voteCoroutine);
             if (_076RegenCoroutine.IsRunning) Timing.KillCoroutines(_076RegenCoroutine);
+            if (_076HumeCoroutine.IsRunning) Timing.KillCoroutines(_076HumeCoroutine);
 
             Exiled.Events.Handlers.Player.Died -= OnPlayerDied;
             Exiled.Events.Handlers.Player.UsingItem -= OnUsed1344;
             Exiled.Events.Handlers.Player.Hurting -= OnAlpha9Hurting;
-
+            Exiled.Events.Handlers.Player.ChangingItem -= On076HoldSCP1509;
         }
     }
-    // ==========================================
-    // 简易 Bot AI 脚本
-    // ==========================================
+
+
     public class Alpha9BotAI : MonoBehaviour
     {
         private Npc _bot;
         private Vector3 _centerPos;
         private float _radius;
+        private bool _isShooting = false; 
 
         public void Init(Vector3 center, float radius)
         {
             _bot = Npc.Get(gameObject);
             _centerPos = center;
             _radius = radius;
-            InvokeRepeating(nameof(AutoAttack), 1f, 0.5f);
             _bot.EnableEffect(EffectType.Ensnared, 255);
+
+            MEC.Timing.CallDelayed(0.5f, () =>
+            {
+                if (_bot != null && _bot.IsAlive)
+                {
+                    _bot.ClearInventory();
+                    _bot.AddItem(ItemType.GunAK);
+                    _bot.CurrentItem = _bot.Items.FirstOrDefault(x => x.Type == ItemType.GunAK);
+                }
+            });
+
+
+            InvokeRepeating(nameof(AutoAttack), 1.5f, 0.3f);
         }
 
-        
         private void AutoAttack()
         {
-            if (_bot == null || !_bot.IsAlive)
+            if (_bot == null || _bot.GameObject == null)
             {
                 CancelInvoke();
                 return;
             }
 
-            // 寻找圆内非自己阵营的敌人
+            if (!_bot.IsAlive)
+            {
+                CancelInvoke();
+                Alpha9Manager.A9Bots.Remove(_bot);
+                _bot.Destroy();
+                return;
+            }
+
             Player target = Player.List.FirstOrDefault(p =>
                 p != _bot &&
                 p.IsAlive &&
@@ -572,16 +603,45 @@ namespace SCP5K.SCPFouRole
 
             if (target != null)
             {
-                Vector3 direction = (target.Position - _bot.Position).normalized;
+
+                Vector3 targetPos = target.Position + Vector3.up * 0.7f;
+                Vector3 direction = (targetPos - _bot.CameraTransform.position).normalized;
+
                 if (direction != Vector3.zero)
                 {
                     _bot.Rotation = Quaternion.LookRotation(direction);
                 }
-                // 模拟射击 (Exiled 8 可能有 _bot.Shoot 等封装，若无则使用底层发包或直接给玩家造伤)
 
-                target.Hurt(_bot, 15f, DamageType.Firearm);
+                if (_bot.CurrentItem != null && _bot.CurrentItem is Firearm firearm)
+                {
+
+                    if (firearm.MagazineAmmo < firearm.MaxMagazineAmmo)
+                    {
+                        firearm.MagazineAmmo = firearm.MaxMagazineAmmo;
+                    }
+
+
+                    if (!_isShooting)
+                    {
+                        string cmd = $"/dummy action {_bot.Id} {firearm.Type}_(ANY) Shoot->Hold";
+                        Server.ExecuteCommand(cmd);
+                        _isShooting = true;
+                    }
+                }
+                else
+                {
+                    target.Hurt(_bot, 15f, DamageType.Firearm);
+                }
+            }
+            else
+            {
+                if (_isShooting && _bot.CurrentItem != null && _bot.CurrentItem is Firearm firearm)
+                {
+                    string cmd = $"/dummy action {_bot.Id} {firearm.Type}_(ANY) Shoot->Release";
+                    Server.ExecuteCommand(cmd);
+                    _isShooting = false;
+                }
             }
         }
-
     }
 }

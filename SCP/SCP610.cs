@@ -20,7 +20,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "SCP-610-母体";
         public override int MaxHealth { get; set; } = 1000;
 
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
         protected override void RoleAdded(Player player)
         {
@@ -35,7 +35,7 @@ namespace SCP5K.SCPFouRole
                 var spawn610 = Room.Get(RoomType.Hcz049);
                 player.Position = spawn610 != null ? spawn610.Position + Vector3.up : new Vector3(59.3f, 992.9f, -42.3f);
                 var message = "你已成为SCP-610母体\n\n生命值: 1000\n能感染他人，附近所有SCP-610成员获得增强\n你的存在会加速血肉的传播！";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 10f, "SCP-610母体");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 10f, "SCP-610母体");
             });
             SCP610.SetMother(player);
         }
@@ -56,7 +56,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "SCP-610-喷射体";
         public override int MaxHealth { get; set; } = 600;
 
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
         public List<ItemType> CustomRoleItems { get; set; } = new List<ItemType> { ItemType.GunCOM15 };
 
@@ -76,7 +76,7 @@ namespace SCP5K.SCPFouRole
                 var spawn610 = Room.Get(RoomType.Hcz049);
                 player.Position = spawn610 != null ? spawn610.Position + Vector3.up : new Vector3(59.3f, 992.9f, -42.3f);
                 var message = "你已成为SCP-610喷射体\n\n生命值: 600\n武器: COM15手枪\n能力: 使用武器快速传播感染";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 10f, "SCP-610喷射体");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 10f, "SCP-610喷射体");
             });
         }
     }
@@ -90,7 +90,7 @@ namespace SCP5K.SCPFouRole
         public override string CustomInfo { get; set; } = "SCP-610-子个体";
         public override int MaxHealth { get; set; } = 400;
 
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
         protected override void RoleAdded(Player player)
         {
@@ -105,7 +105,7 @@ namespace SCP5K.SCPFouRole
                 player.EnableEffect(EffectType.Bleeding, 1, 3f);
                 player.EnableEffect(EffectType.Hemorrhage, 1, 3f);
                 var message = "你已成为SCP-610子个体\n\n生命值: 400\n你现在是血肉瘟疫的一部分\n杀死更多人类来传播感染！";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 10f, "SCP-610子个体");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 10f, "SCP-610子个体");
             });
         }
 

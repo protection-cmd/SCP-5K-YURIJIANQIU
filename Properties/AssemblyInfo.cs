@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 
 [assembly: AssemblyTitle("SCP-5K")]
-[assembly: AssemblyDescription("SCP-5K重插件")]
+[assembly: AssemblyDescription("SCP-5K插件")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("聿日箋秋社区")]
 [assembly: AssemblyProduct("SCP-5K")]

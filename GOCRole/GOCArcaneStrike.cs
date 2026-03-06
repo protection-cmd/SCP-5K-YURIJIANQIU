@@ -25,7 +25,7 @@ namespace SCP5K
         public override string CustomInfo { get; set; } = "GOC奇术打击小组-指挥官";
         public override int MaxHealth { get; set; } = 150;
         public override FactionType Faction => FactionType.GOCArcane;
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -56,7 +56,7 @@ namespace SCP5K
         public override string CustomInfo { get; set; } = "GOC奇术打击小组-中士";
         public override int MaxHealth { get; set; } = 120;
         public override FactionType Faction => FactionType.GOCArcane;
-        public override string Description { get; set; } 
+        public override string Description { get; set; }
 
         public override List<ItemType> CustomRoleItems { get; set; } = new List<ItemType>
         {
@@ -227,7 +227,7 @@ namespace SCP5K
             {
                 ev.IsAllowed = false;
                 var message = "<color=red>只有GOC奇术打击小组成员才能拾取这个手提灯！</color>";
-                HSMShowhint.HsmShowHint(ev.Player, message, 600, 0, 5f, "拾取这个手提灯");
+                HSMShowhint.HsmShowHint(ev.Player, message, 750, 0, 5f, "拾取这个手提灯");
             }
         }
 
@@ -239,7 +239,7 @@ namespace SCP5K
             if (!player.Zone.HasFlag(ZoneType.Surface))
             {
                 var message = "<color=red>必须在地表区域才能激活序列！</color>";
-                if (sequence.Count > 0) { sequence.Clear(); HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "能激活序列"); }
+                if (sequence.Count > 0) { sequence.Clear(); HSMShowhint.HsmShowHint(player, message, 750, 0, 5f, "能激活序列"); }
                 return;
             }
 
@@ -248,7 +248,7 @@ namespace SCP5K
             {
                 sequence.Clear(); sequence.Add(droppedItem);
                 var message = $"✓ 开始激活序列: {GetItemName(droppedItem)}";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 2f, "激活序列");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 2f, "激活序列");
                 return;
             }
 
@@ -258,7 +258,7 @@ namespace SCP5K
             {
                 sequence.Add(droppedItem);
                 var message = $"✓ 序列进度: {sequence.Count}/{requiredSequence.Length}";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 2f, "序列进度");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 2f, "序列进度");
                 if (sequence.SequenceEqual(requiredSequence)) OnSequenceCompleted(player);
             }
             else
@@ -266,7 +266,7 @@ namespace SCP5K
                 sequence.Clear();
                 string expectedItem = expectedIndex < requiredSequence.Length ? GetItemName(requiredSequence[expectedIndex]) : "未知物品";
                 var message = $"✗ 顺序错误！应该丢弃: {expectedItem}\n请重新从{GetItemName(requiredSequence[0])}开始";
-                HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "顺序错误");
+                HSMShowhint.HsmShowHint(player, message, 750, 0, 5f, "顺序错误");
             }
         }
 
@@ -278,7 +278,7 @@ namespace SCP5K
             isCaesarChallengeActive = true;
             Map.ChangeLightsColor(Color.cyan);
 
-            Exiled.API.Features.Cassie.MessageTranslated("Arcane strike activation imminent. All personnel immediately terminate GOC members. Prevent the arcane strike at all costs!", 
+            Exiled.API.Features.Cassie.MessageTranslated("Arcane strike activation imminent. All personnel immediately terminate GOC members. Prevent the arcane strike at all costs!",
                                                         "奇术打击即将被激活，所有人立即击杀GOC成员，阻止奇术打击的到来！！！", false, true);
             PlayGOCMusic();
             StartCaesarChallenges();
@@ -320,7 +320,7 @@ namespace SCP5K
                         {
                             state.CaesarSuccess = true;
                             var message = "<color=green>✅ 凯撒密码正确！</color>";
-                            HSMShowhint.HsmShowHint(member, message, 600, 0, 5f, "凯撒密码正确");
+                            HSMShowhint.HsmShowHint(member, message, 750, 0, 5f, "凯撒密码正确");
 
                             Timing.CallDelayed(0.5f, () =>
                             {
@@ -330,7 +330,7 @@ namespace SCP5K
                                     caesarStates[other].CaesarSuccess = true;
                                     if (DecryptCommand.IsPlayerInChallenge(other)) DecryptCommand.ResetPlayerChallenge(other);
                                     var message = "<color=green>其他成员已成功完成挑战，你也算作成功！</color>";
-                                    HSMShowhint.HsmShowHint(other, message, 600, 0, 5f, "完成挑战");
+                                    HSMShowhint.HsmShowHint(other, message, 750, 0, 5f, "完成挑战");
                                 }
                                 OnCaesarChallengeSuccess();
                             });
@@ -343,7 +343,7 @@ namespace SCP5K
                             GOCArcaneSergeant.Instance.RemoveRole(member);
                             member.Explode();
                             var message = "<color=red>❌ 凯撒密码错误！，学术造假的代价是自爆！</color>";
-                            HSMShowhint.HsmShowHint(member, message, 600, 0, 5f, "自爆");
+                            HSMShowhint.HsmShowHint(member, message, 750, 0, 5f, "自爆");
                         }
                     }
                 }
@@ -378,12 +378,12 @@ namespace SCP5K
                 member.ClearInventory();
                 foreach (var itemType in state.OriginalItems) member.AddItem(itemType);
                 var message = "<color=green>✅ 凯撒密码正确，已恢复原装备和位置！</color>";
-                HSMShowhint.HsmShowHint(member, message, 600, 0, 5f, "恢复原装备");
+                HSMShowhint.HsmShowHint(member, message, 750, 0, 5f, "恢复原装备");
             }
 
             countdownCoroutine = Timing.CallDelayed(CountdownDuration, CheckGOCMembersStatus);
             var message2 = $"<color=red>奇术打击激活倒计时开始！{CountdownDuration}秒后释放</color>";
-            foreach (var p in Player.List) HSMShowhint.HsmShowHint(p, message2, 600, 0, 5f  , "激活倒计时");
+            foreach (var p in Player.List) HSMShowhint.HsmShowHint(p, message2, 750, 0, 5f, "激活倒计时");
             Exiled.API.Features.Cassie.MessageTranslated("Arcane strike activation imminent. All personnel immediately terminate GOC members. This is the final opportunity. Prevent the arcane strike at all costs!", "奇术打击即将被激活，所有人立即击杀GOC成员，这是最后一次机会！阻止奇术打击的到来！！！", false, true);
             ObjectSpawner.SpawnSchematic(RGMSchematicName, RGMSchematicPosition, Quaternion.identity, Vector3.one);
         }
@@ -430,7 +430,7 @@ namespace SCP5K
             if (countdownCoroutine.IsRunning) Timing.KillCoroutines(countdownCoroutine);
             Map.ChangeLightsColor(Color.white);
             var message = "<color=green>✅ 奇术打击已被成功阻止！</color>";
-            foreach (var player in Player.List) HSMShowhint.HsmShowHint(player, message, 600, 0, 5f, "成功阻止");
+            foreach (var player in Player.List) HSMShowhint.HsmShowHint(player, message, 750, 0, 5f, "成功阻止");
             Exiled.API.Features.Cassie.MessageTranslated("GOC arcane strike protocol has been terminated. Facility status returning to normal.", "GOC奇术打击协议已被终止，设施已恢复正常运作状态", false, true);
         }
 
